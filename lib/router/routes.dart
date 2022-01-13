@@ -5,6 +5,7 @@ import 'package:fun_fam/constants.dart';
 import 'package:fun_fam/state/app_state.dart';
 import 'package:fun_fam/ui/entry.dart';
 import 'package:fun_fam/ui/home.dart';
+import 'package:fun_fam/ui/loading_overlay.dart';
 import 'package:fun_fam/ui/login.dart';
 import 'package:go_router/go_router.dart';
 

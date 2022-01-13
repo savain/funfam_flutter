@@ -7,12 +7,17 @@ import '../constants.dart';
 
 class AppState extends ChangeNotifier {
   final SharedPreferences prefs;
+
   bool _isLaunched = false;
   bool _loggedIn = false;
 
+  String? _email;
+  String? _nickname;
+
   AppState(this.prefs) {
-    log("${prefs.getBool(prefLoggedInKey)}");
     loggedIn = prefs.getBool(prefLoggedInKey) ?? false;
+    email = prefs.getString(prefEmailKey);
+    nickname = prefs.getString(prefNicknameKey);
   }
 
   bool get isLaunched => _isLaunched;
@@ -26,6 +31,24 @@ class AppState extends ChangeNotifier {
     _loggedIn = value;
     prefs.setBool(prefLoggedInKey, value);
     notifyListeners();
+  }
+
+  String? get email => _email;
+  set email(String? value) {
+    if (value != null) {
+      _email = value;
+      prefs.setString(prefEmailKey, value);
+      notifyListeners();
+    }
+  }
+
+  String? get nickname => _nickname;
+  set nickname(String? value) {
+    if (value != null) {
+      _nickname = value;
+      prefs.setString(prefNicknameKey, value);
+      notifyListeners();
+    }
   }
 
   void checkLoggedIn() {

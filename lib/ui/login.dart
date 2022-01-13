@@ -1,6 +1,15 @@
+import 'dart:developer';
+import 'dart:io';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fun_fam/state/app_state.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:provider/provider.dart';
+
+import 'loading_overlay.dart';
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
@@ -13,6 +22,8 @@ class _LoginState extends State<Login> {
 
   @override
   Widget build(BuildContext context) {
+    final overlay = LoadingOverlay.of(context);
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -43,7 +54,7 @@ class _LoginState extends State<Login> {
                     const SizedBox(height: 10,),
                     OutlinedButton.icon(
                         onPressed: () {
-                          signInWithGoogle();
+                          overlay.during(signInWithGoogle());
                         },
                         style: ButtonStyle(
                           minimumSize:
@@ -55,7 +66,7 @@ class _LoginState extends State<Login> {
                         ),
                         icon: Image.asset("assets/ic_google.png", width: 25, height: 25,),
                         label: const Text("구글로 시작하기")
-                    )
+                    ),
                   ],
                 ),
               )
@@ -68,22 +79,32 @@ class _LoginState extends State<Login> {
 
   Future<void> signInWithGoogle() async {
     // Trigger the authentication flow
-    // final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
-    // // Obtain the auth details from the request
-    // final GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
-    //
-    // // Create a new credential
-    // final credential = GoogleAuthProvider.credential(
-    //   accessToken: googleAuth?.accessToken,
-    //   idToken: googleAuth?.idToken,
-    // );
-    //
-    // // Once signed in, return the UserCredential
-    // return await FirebaseAuth.instance.signInWithCredential(credential);
-  }
+    log("$googleUser");
+    // Obtain the auth details from the request
+    final GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
 
-  void saveLoginState(BuildContext context) {
-    // Provider.of<AppState>(context, listen: false).loggedIn = true;
+    // Create a new credential
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth?.accessToken,
+      idToken: googleAuth?.idToken,
+    );
+
+    // Once signed in, return the UserCredential
+    await FirebaseAuth.instance.signInWithCredential(credential);
+    Provider.of<AppState>(context, listen: false).email = FirebaseAuth.instance.currentUser?.email;
+
+    // get nickname if exist
+    CollectionReference users = FirebaseFirestore.instance.collection('users');
+    DocumentSnapshot snapshot = await users.doc(FirebaseAuth.instance.currentUser?.uid).get();
+
+    if (snapshot.data() != null) {
+      Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
+      Provider.of<AppState>(context, listen: false).nickname = data["nickname"];
+    }
+
+    // change login status
+    Provider.of<AppState>(context, listen: false).loggedIn = true;
   }
 }

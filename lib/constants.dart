@@ -1,5 +1,7 @@
 // shared preference
 const String prefLoggedInKey = 'PrefLoggedIn';
+const String prefEmailKey = 'PrefEmail';
+const String prefNicknameKey = 'PrefNickname';
 
 // routing
 const String routeEntryName = 'entry';

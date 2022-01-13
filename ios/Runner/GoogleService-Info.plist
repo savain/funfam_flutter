@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>266123075744-6tgsti30ujks6f0dd05tlnct01slshir.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.266123075744-6tgsti30ujks6f0dd05tlnct01slshir</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>266123075744-8h0kp6domkr0jb0s6n4khuku76boqbcd.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyBPoTpxHhfTGywOjOPmaXP-MTmdqDIX_gE</string>
+	<key>GCM_SENDER_ID</key>
+	<string>266123075744</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.ohlee.fun.fam.ios</string>
+	<key>PROJECT_ID</key>
+	<string>funfam-a3f38</string>
+	<key>STORAGE_BUCKET</key>
+	<string>funfam-a3f38.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:266123075744:ios:2f5d4021f6a94d174c69c5</string>
+</dict>
+</plist>
