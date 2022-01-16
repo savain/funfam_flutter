@@ -5,7 +5,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:fun_fam/constants.dart';
 import 'package:fun_fam/state/app_state.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:provider/provider.dart';
 
@@ -95,6 +97,9 @@ class _LoginState extends State<Login> {
     await FirebaseAuth.instance.signInWithCredential(credential);
     Provider.of<AppState>(context, listen: false).email = FirebaseAuth.instance.currentUser?.email;
 
+    // change login status
+    Provider.of<AppState>(context, listen: false).loggedIn = true;
+
     // get nickname if exist
     CollectionReference users = FirebaseFirestore.instance.collection('users');
     DocumentSnapshot snapshot = await users.doc(FirebaseAuth.instance.currentUser?.uid).get();
@@ -104,7 +109,9 @@ class _LoginState extends State<Login> {
       Provider.of<AppState>(context, listen: false).nickname = data["nickname"];
     }
 
-    // change login status
-    Provider.of<AppState>(context, listen: false).loggedIn = true;
+    // if nickname is not set route to nickname page
+    if (Provider.of<AppState>(context, listen: false).nickname == null) {
+      GoRouter.of(context).pushNamed(routeNicknameName);
+    }
   }
 }

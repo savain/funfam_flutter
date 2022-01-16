@@ -75,13 +75,13 @@ class _EntryState extends State<Entry> with TickerProviderStateMixin {
   }
 
   void getUserInfo() async {
-    CollectionReference users = FirebaseFirestore.instance.collection('users');
-    QuerySnapshot snapshot = await users.get();
-    snapshot.docs.forEach((element) {
-      Map<String, dynamic> data = element.data() as Map<String, dynamic>;
-
-      log("Full Name: ${data['nickname']}");
-    });
+    // CollectionReference users = FirebaseFirestore.instance.collection('users');
+    // QuerySnapshot snapshot = await users.get();
+    // snapshot.docs.forEach((element) {
+    //   Map<String, dynamic> data = element.data() as Map<String, dynamic>;
+    //
+    //   log("Full Name: ${data['nickname']}");
+    // });
     // Map<String, dynamic> data = snapshot.data!.data() as Map<String, dynamic>;
 
   }

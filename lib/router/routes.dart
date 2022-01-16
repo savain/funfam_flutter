@@ -7,6 +7,7 @@ import 'package:fun_fam/ui/entry.dart';
 import 'package:fun_fam/ui/home.dart';
 import 'package:fun_fam/ui/loading_overlay.dart';
 import 'package:fun_fam/ui/login.dart';
+import 'package:fun_fam/ui/nickname.dart';
 import 'package:go_router/go_router.dart';
 
 class FunFamRouter {
@@ -41,6 +42,14 @@ class FunFamRouter {
           ),
         ),
         GoRoute(
+          name: routeNicknameName,
+          path: '/nickname',
+          pageBuilder: (context, state) => FadeTransitionPage(
+            key: state.pageKey,
+            child: const Nickname(),
+          ),
+        ),
+        GoRoute(
           name: routeHomeName,
           path: '/home',
           pageBuilder: (context, state) => MaterialPage<void>(
@@ -53,16 +62,34 @@ class FunFamRouter {
       redirect: (state) {
         final entryLoc = state.namedLocation(routeEntryName);
         final loginLoc = state.namedLocation(routeLoginName);
+        final nicknameLoc = state.namedLocation(routeNicknameName);
+
         final launching = state.subloc == entryLoc;
         final loggingIn = state.subloc == loginLoc;
+        final nicknaming = state.subloc == nicknameLoc;
+
         final loggedIn = appState.loggedIn;
         final homeLoc = state.namedLocation(routeHomeName);
 
-        log("launch status ${appState.isLaunched}");
-        log("login status ${appState.loggedIn}");
-        if (!appState.isLaunched && !launching) return entryLoc;
-        if (appState.isLaunched && !loggedIn && !loggingIn) return loginLoc;
-        if (appState.isLaunched && loggedIn && (loggingIn || launching)) return homeLoc;
+        if (!appState.isLaunched && !launching) {
+          return entryLoc;
+        }
+
+        if (appState.isLaunched && !loggedIn && !loggingIn) {
+          return loginLoc;
+        }
+
+        if (appState.isLaunched && loggedIn && appState.nickname == null && !nicknaming) {
+          return nicknameLoc;
+        }
+
+        if (appState.isLaunched
+            && loggedIn
+            && appState.nickname != null
+            && (nicknaming || loggingIn || launching)
+        ) {
+          return homeLoc;
+        }
 
         return null;
       }
