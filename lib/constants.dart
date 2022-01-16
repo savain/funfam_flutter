@@ -2,6 +2,7 @@
 const String prefLoggedInKey = 'PrefLoggedIn';
 const String prefEmailKey = 'PrefEmail';
 const String prefNicknameKey = 'PrefNickname';
+const String prefAvatarRefKey = 'PrefAvatarRef';
 
 // routing
 const String routeEntryName = 'entry';

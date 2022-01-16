@@ -13,6 +13,7 @@ class AppState extends ChangeNotifier {
 
   String? _email;
   String? _nickname;
+  String? _avatarRef;
 
   AppState(this.prefs) {
     loggedIn = prefs.getBool(prefLoggedInKey) ?? false;
@@ -47,6 +48,15 @@ class AppState extends ChangeNotifier {
     if (value != null) {
       _nickname = value;
       prefs.setString(prefNicknameKey, value);
+      notifyListeners();
+    }
+  }
+
+  String? get avatarRef => _avatarRef;
+  set avatarRef(String? value) {
+    if (value != null) {
+      _avatarRef = value;
+      prefs.setString(prefAvatarRefKey, value);
       notifyListeners();
     }
   }

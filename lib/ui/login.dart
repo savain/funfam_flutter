@@ -22,6 +22,10 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
 
+  String? userEmail;
+  String? nickname;
+  bool isLoggedIn = false;
+
   @override
   Widget build(BuildContext context) {
     final overlay = LoadingOverlay.of(context);
@@ -55,8 +59,9 @@ class _LoginState extends State<Login> {
                     const Text("구글 아이디로 로그인 할 수 있어요"),
                     const SizedBox(height: 10,),
                     OutlinedButton.icon(
-                        onPressed: () {
-                          overlay.during(signInWithGoogle());
+                        onPressed: () async {
+                          await overlay.during(signInWithGoogle());
+                          _routing();
                         },
                         style: ButtonStyle(
                           minimumSize:
@@ -95,22 +100,30 @@ class _LoginState extends State<Login> {
 
     // Once signed in, return the UserCredential
     await FirebaseAuth.instance.signInWithCredential(credential);
-    Provider.of<AppState>(context, listen: false).email = FirebaseAuth.instance.currentUser?.email;
-
-    // change login status
-    Provider.of<AppState>(context, listen: false).loggedIn = true;
 
     // get nickname if exist
     CollectionReference users = FirebaseFirestore.instance.collection('users');
     DocumentSnapshot snapshot = await users.doc(FirebaseAuth.instance.currentUser?.uid).get();
 
+    String? nickname;
     if (snapshot.data() != null) {
       Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
-      Provider.of<AppState>(context, listen: false).nickname = data["nickname"];
+      nickname = data["nickname"];
     }
 
-    // if nickname is not set route to nickname page
-    if (Provider.of<AppState>(context, listen: false).nickname == null) {
+    setState(() {
+      userEmail = FirebaseAuth.instance.currentUser?.email;
+      isLoggedIn = true;
+      this.nickname = nickname;
+    });
+  }
+
+  _routing() {
+    Provider.of<AppState>(context, listen: false).loggedIn = true;
+    Provider.of<AppState>(context, listen: false).email = userEmail;
+    Provider.of<AppState>(context, listen: false).nickname = nickname;
+
+    if (nickname == null) {
       GoRouter.of(context).pushNamed(routeNicknameName);
     }
   }
