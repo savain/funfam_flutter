@@ -11,7 +11,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:provider/provider.dart';
 
-import 'loading_overlay.dart';
+import '../component/loading_overlay.dart';
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);

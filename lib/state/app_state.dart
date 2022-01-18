@@ -19,6 +19,7 @@ class AppState extends ChangeNotifier {
     loggedIn = prefs.getBool(prefLoggedInKey) ?? false;
     email = prefs.getString(prefEmailKey);
     nickname = prefs.getString(prefNicknameKey);
+    avatarRef = prefs.getString(prefAvatarRefKey);
   }
 
   bool get isLaunched => _isLaunched;
