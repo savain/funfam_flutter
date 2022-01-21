@@ -1,11 +1,8 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:fun_fam/constants.dart';
 import 'package:fun_fam/state/app_state.dart';
 import 'package:fun_fam/ui/entry.dart';
 import 'package:fun_fam/ui/home.dart';
-import 'package:fun_fam/component/loading_overlay.dart';
 import 'package:fun_fam/ui/login.dart';
 import 'package:fun_fam/ui/nickname.dart';
 import 'package:go_router/go_router.dart';
@@ -22,8 +19,7 @@ class FunFamRouter {
       routes: [
         GoRoute(
           path: '/',
-          redirect: (state) =>
-              state.namedLocation(routeEntryName),
+          redirect: (state) => state.namedLocation(routeEntryName),
         ),
         GoRoute(
           name: routeEntryName,
@@ -54,11 +50,10 @@ class FunFamRouter {
           path: '/home',
           pageBuilder: (context, state) => MaterialPage<void>(
             key: state.pageKey,
-            child: const HomeScreen(),
+            child: const Home(),
           ),
         ),
       ],
-
       redirect: (state) {
         final entryLoc = state.namedLocation(routeEntryName);
         final loginLoc = state.namedLocation(routeLoginName);
@@ -79,21 +74,22 @@ class FunFamRouter {
           return loginLoc;
         }
 
-        if (appState.isLaunched && loggedIn && appState.nickname == null && !nicknaming) {
+        if (appState.isLaunched &&
+            loggedIn &&
+            appState.nickname == null &&
+            !nicknaming) {
           return nicknameLoc;
         }
 
-        if (appState.isLaunched
-            && loggedIn
-            && appState.nickname != null
-            && (nicknaming || loggingIn || launching)
-        ) {
+        if (appState.isLaunched &&
+            loggedIn &&
+            appState.nickname != null &&
+            (nicknaming || loggingIn || launching)) {
           return homeLoc;
         }
 
         return null;
-      }
-  );
+      });
 }
 
 class FadeTransitionPage extends CustomTransitionPage<void> {
@@ -101,12 +97,12 @@ class FadeTransitionPage extends CustomTransitionPage<void> {
     required LocalKey key,
     required Widget child,
   }) : super(
-      key: key,
-      transitionsBuilder: (c, animation, a2, child) => FadeTransition(
-        opacity: animation.drive(_curveTween),
-        child: child,
-      ),
-      child: child);
+            key: key,
+            transitionsBuilder: (c, animation, a2, child) => FadeTransition(
+                  opacity: animation.drive(_curveTween),
+                  child: child,
+                ),
+            child: child);
 
   static final _curveTween = CurveTween(curve: Curves.easeIn);
 }

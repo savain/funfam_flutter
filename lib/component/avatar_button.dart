@@ -90,8 +90,6 @@ class _AvatarButtonState extends State<AvatarButton> {
         _pickedImage = response.file;
       });
       _cropAvatarImage();
-    } else {
-      _showError();
     }
   }
 
@@ -111,8 +109,6 @@ class _AvatarButtonState extends State<AvatarButton> {
       setState(() {
         _pickedImage = pickedImage;
       });
-    } else {
-      _showError();
     }
   }
 

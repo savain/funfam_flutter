@@ -1,43 +1,56 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:fun_fam/component/avatar_button.dart';
-import 'package:fun_fam/state/app_state.dart';
-import 'package:provider/provider.dart';
+import 'package:fun_fam/ui/home/calendar_screen.dart';
+import 'package:fun_fam/ui/home/home_header.dart';
+import 'package:fun_fam/ui/home/home_navigation.dart';
+import 'package:fun_fam/ui/home/profile_screen.dart';
+import 'package:fun_fam/ui/home/shopping_screen.dart';
 
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({
-    Key? key,
-  }) : super(key: key);
+class Home extends StatefulWidget {
+  const Home({Key? key}) : super(key: key);
+
+  @override
+  _HomeState createState() => _HomeState();
+}
+
+class _HomeState extends State<Home> {
+  int _selectedIndex = 1;
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
+  final List _widgetOptions = [
+    const ProfileScreen(),
+    const CalendarScreen(),
+    const ShoppingScreen(),
+  ];
 
   @override
   Widget build(BuildContext context) {
+    TextStyle bottomLabelStyle =
+        Theme.of(context).textTheme.headline3!.copyWith(color: Colors.black);
+
     return Scaffold(
-      body: Center(
-          child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                margin: const EdgeInsets.only(bottom: 40),
-                child: AvatarButton(
-                  size: 85,
-                  onImageSelected: (File selectedImage) {},
-                  avatarRef:
-                      Provider.of<AppState>(context, listen: false).avatarRef,
-                ),
-                width: 85,
-                height: 85,
-                decoration: BoxDecoration(
-                    color: Theme.of(context).primaryColorLight,
-                    borderRadius: const BorderRadius.all(Radius.circular(45))),
-              )
-            ],
-          )
-        ],
-      )),
+      appBar: AppBar(
+        elevation: 0,
+        actions: [Image.asset("assets/ic_noti.png")],
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            if (_selectedIndex > 0) HomeHeader(),
+            Expanded(child: _widgetOptions.elementAt(_selectedIndex))
+          ],
+        ),
+      ),
+      bottomNavigationBar: HomeNavigation(
+        selectedIndex: _selectedIndex,
+        onItemTapped: _onItemTapped,
+      ),
     );
   }
 }
