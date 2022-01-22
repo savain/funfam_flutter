@@ -2,8 +2,10 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:fun_fam/ui/home/calendar/calendar_event.dart';
+import 'package:go_router/go_router.dart';
 import 'package:table_calendar/table_calendar.dart';
 
+import '../../../constants.dart';
 import 'calendar_builder.dart';
 import 'calendar_header.dart';
 
@@ -55,9 +57,6 @@ class _CalendarScreenState extends State<CalendarScreen> {
           child: ListView(
             physics: const ClampingScrollPhysics(),
             children: [
-              const SizedBox(
-                height: 40,
-              ),
               Container(
                 color: Theme.of(context).primaryColorLight,
                 child: Padding(
@@ -87,6 +86,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
                       ),
                       TableCalendar<CalendarEvent>(
                         calendarBuilders: getPickerBuilder(context),
+                        calendarStyle:
+                            const CalendarStyle(isTodayHighlighted: false),
                         rowHeight: 40,
                         firstDay: kFirstDay,
                         lastDay: kLastDay,
@@ -107,7 +108,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 ),
               ),
               Container(
-                color: Colors.blue,
+                color: Colors.white,
                 height: 240,
                 width: double.infinity,
               )
@@ -117,7 +118,9 @@ class _CalendarScreenState extends State<CalendarScreen> {
         SizedBox(
           height: 40,
           child: TextButton(
-              onPressed: () {},
+              onPressed: () {
+                context.pushNamed(routeScheduleCreate);
+              },
               style: ButtonStyle(
                 minimumSize:
                     MaterialStateProperty.all(const Size.fromHeight(40)),
@@ -127,7 +130,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 )),
                 backgroundColor: MaterialStateProperty.all(
                     Theme.of(context).selectedRowColor),
-                foregroundColor: MaterialStateProperty.all(Colors.black),
+                foregroundColor: MaterialStateProperty.all(Colors.white),
                 textStyle: MaterialStateProperty.all(
                     Theme.of(context).textTheme.headline3),
               ),

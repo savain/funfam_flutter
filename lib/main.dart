@@ -47,6 +47,10 @@ class FunFamApp extends StatelessWidget {
               debugShowCheckedModeBanner: false,
               title: 'FunFam',
               theme: ThemeData(
+                  pageTransitionsTheme: const PageTransitionsTheme(builders: {
+                    TargetPlatform.android: CupertinoPageTransitionsBuilder(),
+                    TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+                  }),
                   primaryColor: const Color(0xffadadad),
                   primaryColorLight: const Color(0xfffafafa),
                   primaryColorDark: const Color(0xff000000),

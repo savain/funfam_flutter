@@ -9,3 +9,5 @@ const String routeEntryName = 'entry';
 const String routeLoginName = 'login';
 const String routeNicknameName = 'nickname';
 const String routeHomeName = 'home';
+
+const String routeScheduleCreate = 'scheduleCreate';
