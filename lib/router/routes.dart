@@ -3,7 +3,6 @@ import 'package:fun_fam/constants.dart';
 import 'package:fun_fam/state/app_state.dart';
 import 'package:fun_fam/ui/entry.dart';
 import 'package:fun_fam/ui/home.dart';
-import 'package:fun_fam/ui/login.dart';
 import 'package:fun_fam/ui/nickname.dart';
 import 'package:go_router/go_router.dart';
 
@@ -29,14 +28,14 @@ class FunFamRouter {
             child: const Entry(),
           ),
         ),
-        GoRoute(
-          name: routeLoginName,
-          path: '/login',
-          pageBuilder: (context, state) => FadeTransitionPage(
-            key: state.pageKey,
-            child: const Login(),
-          ),
-        ),
+        // GoRoute(
+        //   name: routeLoginName,
+        //   path: '/login',
+        //   pageBuilder: (context, state) => FadeTransitionPage(
+        //     key: state.pageKey,
+        //     child: const Login(),
+        //   ),
+        // ),
         GoRoute(
           name: routeNicknameName,
           path: '/nickname',
@@ -56,11 +55,11 @@ class FunFamRouter {
       ],
       redirect: (state) {
         final entryLoc = state.namedLocation(routeEntryName);
-        final loginLoc = state.namedLocation(routeLoginName);
+        // final loginLoc = state.namedLocation(routeLoginName);
         final nicknameLoc = state.namedLocation(routeNicknameName);
 
         final launching = state.subloc == entryLoc;
-        final loggingIn = state.subloc == loginLoc;
+        // final loggingIn = state.subloc == loginLoc;
         final nicknaming = state.subloc == nicknameLoc;
 
         final loggedIn = appState.loggedIn;
@@ -70,9 +69,9 @@ class FunFamRouter {
           return entryLoc;
         }
 
-        if (appState.isLaunched && !loggedIn && !loggingIn) {
-          return loginLoc;
-        }
+        // if (appState.isLaunched && !loggedIn && !loggingIn) {
+        //   return loginLoc;
+        // }
 
         if (appState.isLaunched &&
             loggedIn &&
@@ -84,7 +83,7 @@ class FunFamRouter {
         if (appState.isLaunched &&
             loggedIn &&
             appState.nickname != null &&
-            (nicknaming || loggingIn || launching)) {
+            (nicknaming || launching)) {
           return homeLoc;
         }
 

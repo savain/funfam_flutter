@@ -94,6 +94,10 @@ class _AvatarButtonState extends State<AvatarButton> {
   }
 
   Future<void> _getAvatarImageUrl() async {
+    if (widget.avatarRef == null) {
+      return;
+    }
+
     String downloadUrl = await firebase_storage.FirebaseStorage.instance
         .ref(widget.avatarRef!)
         .getDownloadURL();

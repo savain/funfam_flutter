@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fun_fam/ui/home/calendar_screen.dart';
+import 'package:fun_fam/ui/home/calendar/calendar_screen.dart';
 import 'package:fun_fam/ui/home/home_header.dart';
 import 'package:fun_fam/ui/home/home_navigation.dart';
 import 'package:fun_fam/ui/home/profile_screen.dart';
@@ -37,15 +37,12 @@ class _HomeState extends State<Home> {
         elevation: 0,
         actions: [Image.asset("assets/ic_noti.png")],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            if (_selectedIndex > 0) HomeHeader(),
-            Expanded(child: _widgetOptions.elementAt(_selectedIndex))
-          ],
-        ),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          if (_selectedIndex > 0) HomeHeader(),
+          Expanded(child: _widgetOptions.elementAt(_selectedIndex))
+        ],
       ),
       bottomNavigationBar: HomeNavigation(
         selectedIndex: _selectedIndex,

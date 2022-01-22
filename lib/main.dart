@@ -50,6 +50,7 @@ class FunFamApp extends StatelessWidget {
                   primaryColor: const Color(0xffadadad),
                   primaryColorLight: const Color(0xfffafafa),
                   primaryColorDark: const Color(0xff000000),
+                  selectedRowColor: const Color(0xffcacaca),
                   indicatorColor: const Color(0xffa2ced4),
                   highlightColor: const Color(0xffa2b3d4),
                   fontFamily: 'SpoqaHanSansNeo',
