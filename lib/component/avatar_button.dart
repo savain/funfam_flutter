@@ -5,6 +5,7 @@ import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:fun_fam/theme/FunFamColorScheme.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -122,10 +123,10 @@ class _AvatarButtonState extends State<AvatarButton> {
         aspectRatioPresets: [CropAspectRatioPreset.square],
         androidUiSettings: AndroidUiSettings(
             toolbarTitle: '썸네일 이미지 수정',
-            toolbarColor: Theme.of(context).indicatorColor,
+            toolbarColor: Theme.of(context).colorScheme.green,
             toolbarWidgetColor: Colors.white,
-            statusBarColor: Theme.of(context).indicatorColor,
-            activeControlsWidgetColor: Theme.of(context).indicatorColor,
+            statusBarColor: Theme.of(context).colorScheme.green,
+            activeControlsWidgetColor: Theme.of(context).colorScheme.green,
             initAspectRatio: CropAspectRatioPreset.original,
             lockAspectRatio: false),
         iosUiSettings: const IOSUiSettings(
@@ -175,7 +176,7 @@ class _AvatarButtonState extends State<AvatarButton> {
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.BOTTOM,
         timeInSecForIosWeb: 1,
-        backgroundColor: Theme.of(context).primaryColorLight,
+        backgroundColor: Theme.of(context).colorScheme.lightGrey2,
         textColor: Colors.black,
         fontSize: 16.0);
   }

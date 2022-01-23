@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:fun_fam/component/avatar_button.dart';
 import 'package:fun_fam/state/app_state.dart';
+import 'package:fun_fam/theme/FunFamColorScheme.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -27,14 +28,14 @@ class HomeHeader extends StatelessWidget {
                 style: Theme.of(context)
                     .textTheme
                     .headline3!
-                    .copyWith(color: Theme.of(context).primaryColorDark),
+                    .copyWith(color: Theme.of(context).colorScheme.black),
               ),
               Text(
                 "Welcome back,\n${Provider.of<AppState>(context, listen: false).nickname}",
                 style: Theme.of(context)
                     .textTheme
                     .headline1!
-                    .copyWith(color: Theme.of(context).primaryColorDark),
+                    .copyWith(color: Theme.of(context).colorScheme.black),
               ),
             ],
           ),
@@ -48,7 +49,7 @@ class HomeHeader extends StatelessWidget {
             width: 85,
             height: 85,
             decoration: BoxDecoration(
-                color: Theme.of(context).primaryColorLight,
+                color: Theme.of(context).colorScheme.lightGrey1,
                 borderRadius: const BorderRadius.all(Radius.circular(45))),
           )
         ],

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:fun_fam/ui/home/calendar/calendar_screen.dart';
 import 'package:fun_fam/ui/home/home_header.dart';
 import 'package:fun_fam/ui/home/home_navigation.dart';
 import 'package:fun_fam/ui/home/profile_screen.dart';
 import 'package:fun_fam/ui/home/shopping_screen.dart';
+import 'package:fun_fam/ui/scehdule/schedule_home.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -23,7 +23,7 @@ class _HomeState extends State<Home> {
 
   final List _widgetOptions = [
     const ProfileScreen(),
-    const CalendarScreen(),
+    const ScheduleHome(),
     const ShoppingScreen(),
   ];
 

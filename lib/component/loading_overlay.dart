@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-
+import 'package:fun_fam/theme/FunFamColorScheme.dart';
 
 class LoadingOverlay {
   BuildContext _context;
@@ -34,11 +34,8 @@ class _FullScreenLoader extends StatelessWidget {
     return Container(
         decoration: const BoxDecoration(color: Color.fromRGBO(0, 0, 0, 0.3)),
         child: Center(
-            child: SpinKitChasingDots(
-              color: Theme.of(context).indicatorColor,
-              size: 50.0
-            ),
-        )
-    );
+          child: SpinKitChasingDots(
+              color: Theme.of(context).colorScheme.green, size: 50.0),
+        ));
   }
 }

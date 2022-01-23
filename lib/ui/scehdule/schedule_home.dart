@@ -1,22 +1,21 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
-import 'package:fun_fam/ui/home/calendar/calendar_event.dart';
+import 'package:fun_fam/theme/FunFamColorScheme.dart';
+import 'package:fun_fam/ui/calendar/calendar_builder.dart';
+import 'package:fun_fam/ui/calendar/calendar_event.dart';
+import 'package:fun_fam/ui/calendar/calendar_header.dart';
 import 'package:go_router/go_router.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 import '../../../constants.dart';
-import 'calendar_builder.dart';
-import 'calendar_header.dart';
 
-class CalendarScreen extends StatefulWidget {
-  const CalendarScreen({Key? key}) : super(key: key);
+class ScheduleHome extends StatefulWidget {
+  const ScheduleHome({Key? key}) : super(key: key);
 
   @override
-  _CalendarScreenState createState() => _CalendarScreenState();
+  _ScheduleHomeState createState() => _ScheduleHomeState();
 }
 
-class _CalendarScreenState extends State<CalendarScreen> {
+class _ScheduleHomeState extends State<ScheduleHome> {
   late PageController _pageController;
   late final ValueNotifier<List<CalendarEvent>> _selectedEvents;
   final ValueNotifier<DateTime> _focusedDay = ValueNotifier(DateTime.now());
@@ -45,7 +44,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
   }
 
   List<CalendarEvent> _getEventsForDay(DateTime day) {
-    log("_getEventForDay ${day.month}:${day.day}");
+    // log("_getEventForDay ${day.month}:${day.day}");
     return kEvents[day] ?? [];
   }
 
@@ -58,7 +57,12 @@ class _CalendarScreenState extends State<CalendarScreen> {
             physics: const ClampingScrollPhysics(),
             children: [
               Container(
-                color: Theme.of(context).primaryColorLight,
+                decoration: BoxDecoration(
+                    border: Border.symmetric(
+                        horizontal: BorderSide(
+                            width: 0.25,
+                            color: Theme.of(context).colorScheme.lightGrey2)),
+                    color: Theme.of(context).colorScheme.lightGrey1),
                 child: Padding(
                   padding:
                       const EdgeInsets.symmetric(vertical: 30, horizontal: 48),
@@ -85,7 +89,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                         },
                       ),
                       TableCalendar<CalendarEvent>(
-                        calendarBuilders: getPickerBuilder(context),
+                        calendarBuilders: getBuilder(context),
                         calendarStyle:
                             const CalendarStyle(isTodayHighlighted: false),
                         rowHeight: 40,
@@ -129,7 +133,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                   borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
                 )),
                 backgroundColor: MaterialStateProperty.all(
-                    Theme.of(context).selectedRowColor),
+                    Theme.of(context).colorScheme.lightGrey2),
                 foregroundColor: MaterialStateProperty.all(Colors.white),
                 textStyle: MaterialStateProperty.all(
                     Theme.of(context).textTheme.headline3),

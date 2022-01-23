@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.ohlee.fun_fam.android">
    <application
-        android:label="fun_fam"
+        android:label="FunFam"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

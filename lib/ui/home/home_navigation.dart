@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:fun_fam/theme/FunFamColorScheme.dart';
 
 class HomeNavigation extends StatelessWidget {
   final int selectedIndex;
@@ -14,7 +15,7 @@ class HomeNavigation extends StatelessWidget {
     return BottomNavigationBar(
       showSelectedLabels: false,
       showUnselectedLabels: false,
-      backgroundColor: Theme.of(context).primaryColorLight,
+      backgroundColor: Theme.of(context).colorScheme.lightGrey1,
       items: <BottomNavigationBarItem>[
         BottomNavigationBarItem(
             icon: SvgPicture.asset(

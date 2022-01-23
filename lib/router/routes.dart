@@ -3,8 +3,8 @@ import 'package:fun_fam/constants.dart';
 import 'package:fun_fam/state/app_state.dart';
 import 'package:fun_fam/ui/entry.dart';
 import 'package:fun_fam/ui/home.dart';
-import 'package:fun_fam/ui/home/scehdule/create_schedule.dart';
 import 'package:fun_fam/ui/nickname.dart';
+import 'package:fun_fam/ui/scehdule/create/create_schedule.dart';
 import 'package:go_router/go_router.dart';
 
 class FunFamRouter {
