@@ -126,6 +126,7 @@ class _ScheduleHomeState extends State<ScheduleHome> {
                 context.pushNamed(routeScheduleCreate);
               },
               style: ButtonStyle(
+                splashFactory: NoSplash.splashFactory,
                 minimumSize:
                     MaterialStateProperty.all(const Size.fromHeight(40)),
                 shape: MaterialStateProperty.all<RoundedRectangleBorder>(

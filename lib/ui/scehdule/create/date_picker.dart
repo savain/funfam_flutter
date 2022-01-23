@@ -5,7 +5,10 @@ import 'package:fun_fam/ui/calendar/calendar_header.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class ScheduleDatePicker extends StatefulWidget {
-  const ScheduleDatePicker({Key? key}) : super(key: key);
+  final Function(DateTime start, DateTime end) onDateSelected;
+
+  const ScheduleDatePicker({Key? key, required this.onDateSelected})
+      : super(key: key);
 
   @override
   _ScheduleDatePickerState createState() => _ScheduleDatePickerState();
@@ -16,12 +19,11 @@ class _ScheduleDatePickerState extends State<ScheduleDatePicker> {
   final ValueNotifier<DateTime> _focusedDay = ValueNotifier(DateTime.now());
 
   final CalendarFormat _calendarFormat = CalendarFormat.month;
-  RangeSelectionMode _rangeSelectionMode = RangeSelectionMode.toggledOn;
+  final RangeSelectionMode _rangeSelectionMode = RangeSelectionMode.toggledOn;
 
   late DateTime kFirstDay;
   late DateTime kLastDay;
 
-  DateTime? _selectedDay;
   DateTime? _rangeStart;
   DateTime? _rangeEnd;
 
@@ -86,24 +88,11 @@ class _ScheduleDatePickerState extends State<ScheduleDatePicker> {
                   calendarFormat: _calendarFormat,
                   availableGestures: AvailableGestures.horizontalSwipe,
                   rangeSelectionMode: _rangeSelectionMode,
-                  onDaySelected: (selectedDay, focusedDay) {
-                    if (!isSameDay(_selectedDay, selectedDay)) {
-                      setState(() {
-                        _selectedDay = selectedDay;
-                        _focusedDay.value = focusedDay;
-                        _rangeStart = null; // Important to clean those
-                        _rangeEnd = null;
-                        _rangeSelectionMode = RangeSelectionMode.toggledOff;
-                      });
-                    }
-                  },
                   onRangeSelected: (start, end, focusedDay) {
                     setState(() {
-                      _selectedDay = null;
                       _focusedDay.value = focusedDay;
                       _rangeStart = start;
                       _rangeEnd = end;
-                      _rangeSelectionMode = RangeSelectionMode.toggledOn;
                     });
                   },
                   onCalendarCreated: (controller) =>
@@ -114,8 +103,15 @@ class _ScheduleDatePickerState extends State<ScheduleDatePicker> {
             ),
           ),
           TextButton(
-              onPressed: () {},
+              onPressed: (_rangeStart != null)
+                  ? () {
+                      widget.onDateSelected(
+                          _rangeStart!, _rangeEnd ?? _rangeStart!);
+                      Navigator.of(context).pop();
+                    }
+                  : null,
               style: ButtonStyle(
+                splashFactory: NoSplash.splashFactory,
                 minimumSize:
                     MaterialStateProperty.all(const Size.fromHeight(50)),
                 shape: MaterialStateProperty.all<RoundedRectangleBorder>(
@@ -124,21 +120,15 @@ class _ScheduleDatePickerState extends State<ScheduleDatePicker> {
                 )),
                 backgroundColor: MaterialStateProperty.all(
                     Theme.of(context).colorScheme.lightGrey1),
-                foregroundColor: MaterialStateProperty.all(
-                    Theme.of(context).colorScheme.darkGrey),
+                foregroundColor: MaterialStateProperty.all(_rangeStart != null
+                    ? Theme.of(context).colorScheme.black
+                    : Theme.of(context).colorScheme.darkGrey),
                 textStyle: MaterialStateProperty.all(
                     Theme.of(context).textTheme.headline2),
               ),
               child: const Text("선택완료")),
         ],
       ),
-    )
-        //
-        //
-        // Column(mainAxisAlignment: MainAxisAlignment.end, children: [
-        //
-        //
-        // ]),
-        );
+    ));
   }
 }

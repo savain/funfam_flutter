@@ -64,7 +64,7 @@ class _NicknameState extends State<Nickname> {
                   margin: const EdgeInsets.only(bottom: 40),
                   child: AvatarButton(
                     size: 85,
-                    onImageSelected: (File selectedImage) {
+                    onImageSelected: (selectedImage) {
                       setState(() {
                         _croppedImage = selectedImage;
                       });
