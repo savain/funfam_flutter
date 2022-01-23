@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
@@ -38,7 +39,7 @@ class _AvatarButtonState extends State<AvatarButton> {
   @override
   void initState() {
     super.initState();
-
+    log("_AvatarButtonState  initState");
     imageUrlFuture = _getAvatarImageUrl();
   }
 

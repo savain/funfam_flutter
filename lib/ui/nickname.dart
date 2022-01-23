@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -10,6 +9,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:fun_fam/component/avatar_button.dart';
 import 'package:fun_fam/model/FunFamUser.dart';
 import 'package:fun_fam/state/app_state.dart';
+import 'package:fun_fam/theme/FunFamColorScheme.dart';
 import 'package:path/path.dart' as p;
 import 'package:provider/provider.dart';
 
@@ -73,7 +73,7 @@ class _NicknameState extends State<Nickname> {
                   width: 85,
                   height: 85,
                   decoration: BoxDecoration(
-                      color: Theme.of(context).primaryColorLight,
+                      color: Theme.of(context).colorScheme.lightGrey1,
                       borderRadius:
                           const BorderRadius.all(Radius.circular(45))),
                 )),
@@ -95,18 +95,20 @@ class _NicknameState extends State<Nickname> {
                         decoration: InputDecoration(
                           filled: true,
                           fillColor: nickname.isNotEmpty
-                              ? Theme.of(context).highlightColor
-                              : Theme.of(context).primaryColorLight,
+                              ? Theme.of(context).colorScheme.blue
+                              : Theme.of(context).colorScheme.lightGrey1,
                           contentPadding: const EdgeInsets.only(
                               left: 20, right: 20, top: 2, bottom: 2),
                           focusedBorder: OutlineInputBorder(
                             borderSide: BorderSide(
-                                color: Theme.of(context).primaryColorLight),
+                                color:
+                                    Theme.of(context).colorScheme.lightGrey1),
                             borderRadius: BorderRadius.circular(25),
                           ),
                           enabledBorder: UnderlineInputBorder(
                             borderSide: BorderSide(
-                                color: Theme.of(context).primaryColorLight),
+                                color:
+                                    Theme.of(context).colorScheme.lightGrey1),
                             borderRadius: BorderRadius.circular(25),
                           ),
                           border: InputBorder.none,
@@ -114,7 +116,9 @@ class _NicknameState extends State<Nickname> {
                           hintStyle: Theme.of(context)
                               .textTheme
                               .headline2!
-                              .copyWith(color: Theme.of(context).primaryColor),
+                              .copyWith(
+                                  color:
+                                      Theme.of(context).colorScheme.lightGrey2),
                         )),
                   ),
                 ),
@@ -128,10 +132,8 @@ class _NicknameState extends State<Nickname> {
                         },
                         child: Text(
                           "다른 이메일로 로그인하기",
-                          style: Theme.of(context)
-                              .textTheme
-                              .caption!
-                              .copyWith(color: Theme.of(context).primaryColor),
+                          style: Theme.of(context).textTheme.caption!.copyWith(
+                              color: Theme.of(context).colorScheme.darkGrey),
                         )),
                     SizedBox(
                       height: 50,
@@ -153,13 +155,13 @@ class _NicknameState extends State<Nickname> {
                               .copyWith(
                                   color: _isStartButtonEnable
                                       ? Colors.white
-                                      : Theme.of(context).primaryColor),
+                                      : Theme.of(context).colorScheme.darkGrey),
                         ),
                         style: ButtonStyle(
                           backgroundColor: MaterialStateProperty.all(
                               _isStartButtonEnable
-                                  ? Theme.of(context).highlightColor
-                                  : Theme.of(context).primaryColorLight),
+                                  ? Theme.of(context).colorScheme.blue
+                                  : Theme.of(context).colorScheme.lightGrey1),
                         ),
                       ),
                     )
@@ -218,7 +220,6 @@ class _NicknameState extends State<Nickname> {
     await users.doc(uid).set(FunFamUser(
         uid: uid, email: email, nickname: nickname, avatarRef: avatarRef));
 
-    log('avatar Ref is ${avatarRef}');
     Provider.of<AppState>(context, listen: false).avatarRef = avatarRef;
 
     return nickname;

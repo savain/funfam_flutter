@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:fun_fam/ui/home/home_header.dart';
 import 'package:fun_fam/ui/home/home_navigation.dart';
 import 'package:fun_fam/ui/home/profile_screen.dart';
 import 'package:fun_fam/ui/home/shopping_screen.dart';
 import 'package:fun_fam/ui/scehdule/schedule_home.dart';
+
+import 'home/home_header.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -21,10 +22,19 @@ class _HomeState extends State<Home> {
     });
   }
 
-  final List _widgetOptions = [
-    const ProfileScreen(),
-    const ScheduleHome(),
-    const ShoppingScreen(),
+  final List<Widget> _widgetOptions = [
+    Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: const [Expanded(child: ProfileScreen())],
+    ),
+    Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: const [HomeHeader(), Expanded(child: ScheduleHome())],
+    ),
+    Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: const [HomeHeader(), Expanded(child: ShoppingScreen())],
+    )
   ];
 
   @override
@@ -37,13 +47,18 @@ class _HomeState extends State<Home> {
         elevation: 0,
         actions: [Image.asset("assets/ic_noti.png")],
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          if (_selectedIndex > 0) HomeHeader(),
-          Expanded(child: _widgetOptions.elementAt(_selectedIndex))
-        ],
+      body: IndexedStack(
+        index: _selectedIndex,
+        children: _widgetOptions,
       ),
+      //
+      // Column(
+      //   mainAxisAlignment: MainAxisAlignment.center,
+      //   children: [
+      //     if (_selectedIndex > 0) HomeHeader(),
+      //     Expanded(child: _widgetOptions.elementAt(_selectedIndex))
+      //   ],
+      // ),
       bottomNavigationBar: HomeNavigation(
         selectedIndex: _selectedIndex,
         onItemTapped: _onItemTapped,
