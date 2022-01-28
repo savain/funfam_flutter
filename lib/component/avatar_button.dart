@@ -1,8 +1,6 @@
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -15,13 +13,13 @@ import 'loading_overlay.dart';
 class AvatarButton extends StatefulWidget {
   final double size;
   final Function(File selectedImage) onImageSelected;
-  final String? avatarRef;
+  final String? avatarUrl;
 
   const AvatarButton(
       {Key? key,
       required this.size,
       required this.onImageSelected,
-      this.avatarRef})
+      this.avatarUrl})
       : super(key: key);
 
   @override
@@ -32,15 +30,10 @@ class _AvatarButtonState extends State<AvatarButton> {
   final ImagePicker _picker = ImagePicker();
   XFile? _pickedImage;
   File? _croppedImage;
-  String? _avatarUrl;
-
-  late Future imageUrlFuture;
 
   @override
   void initState() {
     super.initState();
-    log("_AvatarButtonState  initState");
-    imageUrlFuture = _getAvatarImageUrl();
   }
 
   @override
@@ -53,23 +46,9 @@ class _AvatarButtonState extends State<AvatarButton> {
           ? FutureBuilder<void>(
               future: _retrieveLostData(),
               builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
-                return (widget.avatarRef != null)
-                    ? FutureBuilder<void>(
-                        future: imageUrlFuture,
-                        builder: (BuildContext context,
-                            AsyncSnapshot<void> snapshot) {
-                          return _getAvatarWidget();
-                        })
-                    : _getAvatarWidget();
+                return _getAvatarWidget();
               })
-          : (widget.avatarRef != null)
-              ? FutureBuilder<void>(
-                  future: imageUrlFuture,
-                  builder:
-                      (BuildContext context, AsyncSnapshot<void> snapshot) {
-                    return _getAvatarWidget();
-                  })
-              : _getAvatarWidget(),
+          : _getAvatarWidget(),
       splashColor: Colors.transparent,
       highlightColor: Colors.transparent,
       onPressed: () async {
@@ -93,20 +72,6 @@ class _AvatarButtonState extends State<AvatarButton> {
       });
       _cropAvatarImage();
     }
-  }
-
-  Future<void> _getAvatarImageUrl() async {
-    if (widget.avatarRef == null) {
-      return;
-    }
-
-    String downloadUrl = await firebase_storage.FirebaseStorage.instance
-        .ref(widget.avatarRef!)
-        .getDownloadURL();
-
-    setState(() {
-      _avatarUrl = downloadUrl;
-    });
   }
 
   Future<void> _pickAvatarImage() async {
@@ -145,9 +110,9 @@ class _AvatarButtonState extends State<AvatarButton> {
   }
 
   Widget _getAvatarWidget() {
-    if (_avatarUrl != null) {
+    if (widget.avatarUrl != null) {
       return CachedNetworkImage(
-          imageUrl: _avatarUrl!,
+          imageUrl: widget.avatarUrl!,
           imageBuilder: (context, imageProvider) => Container(
                 width: widget.size,
                 height: widget.size,
@@ -157,7 +122,6 @@ class _AvatarButtonState extends State<AvatarButton> {
                       DecorationImage(image: imageProvider, fit: BoxFit.cover),
                 ),
               ),
-          placeholder: (context, url) => Image.asset("assets/ic_anonymous.png"),
           errorWidget: (context, url, error) =>
               Image.asset("assets/ic_anonymous.png"));
     } else {

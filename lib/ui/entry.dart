@@ -21,7 +21,7 @@ class _EntryState extends State<Entry> with TickerProviderStateMixin {
 
   String? userEmail;
   String? nickname;
-  String? avatarRef;
+  String? avatarUrl;
   bool isLoggedIn = false;
 
   @override
@@ -137,18 +137,18 @@ class _EntryState extends State<Entry> with TickerProviderStateMixin {
         await users.doc(FirebaseAuth.instance.currentUser?.uid).get();
 
     String? nickname;
-    String? avatarRef;
+    String? avatarUrl;
     if (snapshot.data() != null) {
       Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
       nickname = data["nickname"];
-      avatarRef = data["avatarRef"];
+      avatarUrl = data["avatarUrl"];
     }
 
     setState(() {
       userEmail = FirebaseAuth.instance.currentUser?.email;
       isLoggedIn = true;
       this.nickname = nickname;
-      this.avatarRef = avatarRef;
+      this.avatarUrl = avatarUrl;
     });
   }
 
@@ -156,7 +156,7 @@ class _EntryState extends State<Entry> with TickerProviderStateMixin {
     Provider.of<AppState>(context, listen: false).loggedIn = true;
     Provider.of<AppState>(context, listen: false).email = userEmail;
     Provider.of<AppState>(context, listen: false).nickname = nickname;
-    Provider.of<AppState>(context, listen: false).avatarRef = avatarRef;
+    Provider.of<AppState>(context, listen: false).avatarUrl = avatarUrl;
 
     if (nickname == null) {
       GoRouter.of(context).pushNamed(routeNicknameName);

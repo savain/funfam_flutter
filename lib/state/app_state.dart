@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -13,13 +11,13 @@ class AppState extends ChangeNotifier {
 
   String? _email;
   String? _nickname;
-  String? _avatarRef;
+  String? _avatarUrl;
 
   AppState(this.prefs) {
     loggedIn = prefs.getBool(prefLoggedInKey) ?? false;
     email = prefs.getString(prefEmailKey);
     nickname = prefs.getString(prefNicknameKey);
-    avatarRef = prefs.getString(prefAvatarRefKey);
+    avatarUrl = prefs.getString(prefAvatarUrlKey);
   }
 
   bool get isLaunched => _isLaunched;
@@ -53,11 +51,11 @@ class AppState extends ChangeNotifier {
     }
   }
 
-  String? get avatarRef => _avatarRef;
-  set avatarRef(String? value) {
+  String? get avatarUrl => _avatarUrl;
+  set avatarUrl(String? value) {
     if (value != null) {
-      _avatarRef = value;
-      prefs.setString(prefAvatarRefKey, value);
+      _avatarUrl = value;
+      prefs.setString(prefAvatarUrlKey, value);
       notifyListeners();
     }
   }

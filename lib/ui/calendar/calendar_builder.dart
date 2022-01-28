@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fun_fam/model/ScheduleModel.dart';
 import 'package:fun_fam/theme/FunFamColorScheme.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -53,7 +54,7 @@ Widget _buildMarker({required BuildContext context}) {
   );
 }
 
-CalendarBuilders<CalendarEvent> getBuilder(BuildContext context) {
+CalendarBuilders<ScheduleModel> getBuilder(BuildContext context) {
   return CalendarBuilders(
     todayBuilder: (context, day, focusedDay) {
       return _buildCalendarDay(
@@ -65,7 +66,7 @@ CalendarBuilders<CalendarEvent> getBuilder(BuildContext context) {
       return _buildCalendarDay(
           context: context,
           day: day,
-          textColor: Theme.of(context).primaryColor,
+          textColor: Theme.of(context).colorScheme.lightGrey2,
           backgroundColor: Theme.of(context).colorScheme.lightGrey1);
     },
     defaultBuilder: (context, day, focusedDay) {

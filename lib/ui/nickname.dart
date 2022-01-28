@@ -183,18 +183,22 @@ class _NicknameState extends State<Nickname> {
 
   Future<String?> _startFunFam() async {
     String uid = FirebaseAuth.instance.currentUser!.uid;
-    String? avatarRef;
+    String? avatarUrl;
 
     if (_croppedImage != null) {
       try {
         String extension = p.extension(_croppedImage!.path);
-        avatarRef = 'avatar/$uid$extension';
+        String avatarRef = 'avatar/$uid$extension';
 
         await firebase_storage.FirebaseStorage.instance
             .ref(avatarRef)
             .putFile(_croppedImage!);
+
+        avatarUrl = await firebase_storage.FirebaseStorage.instance
+            .ref(avatarRef)
+            .getDownloadURL();
       } on FirebaseException catch (e) {
-        avatarRef = null;
+        avatarUrl = null;
 
         Fluttertoast.showToast(
             msg: "사진 업로드에 실패했습니다.\n다시 시도해주세요!",
@@ -218,9 +222,9 @@ class _NicknameState extends State<Nickname> {
     String email = Provider.of<AppState>(context, listen: false).email ?? "";
 
     await users.doc(uid).set(FunFamUser(
-        uid: uid, email: email, nickname: nickname, avatarRef: avatarRef));
+        uid: uid, email: email, nickname: nickname, avatarUrl: avatarUrl));
 
-    Provider.of<AppState>(context, listen: false).avatarRef = avatarRef;
+    Provider.of<AppState>(context, listen: false).avatarUrl = avatarUrl;
 
     return nickname;
   }

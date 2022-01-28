@@ -8,15 +8,15 @@ import 'package:fun_fam/component/loading_overlay.dart';
 import 'package:fun_fam/model/ScheduleModel.dart';
 import 'package:fun_fam/state/app_state.dart';
 import 'package:fun_fam/theme/FunFamColorScheme.dart';
-import 'package:fun_fam/ui/scehdule/create/date_picker_activator.dart';
-import 'package:fun_fam/ui/scehdule/create/schedule_content_input.dart';
-import 'package:fun_fam/ui/scehdule/create/schedule_title_input.dart';
+import 'package:fun_fam/ui/scehdule/create/create_schedule_content_input.dart';
+import 'package:fun_fam/ui/scehdule/create/create_schedule_title_input.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 
-import 'date_picker.dart';
+import 'date_picker/date_picker.dart';
+import 'date_picker/date_picker_activator.dart';
 
 class CreateSchedule extends StatefulWidget {
   const CreateSchedule({Key? key}) : super(key: key);

@@ -43,8 +43,8 @@ class HomeHeader extends StatelessWidget {
             child: AvatarButton(
               size: 85,
               onImageSelected: (File selectedImage) {},
-              avatarRef:
-                  Provider.of<AppState>(context, listen: false).avatarRef,
+              avatarUrl:
+                  Provider.of<AppState>(context, listen: false).avatarUrl,
             ),
             width: 85,
             height: 85,
