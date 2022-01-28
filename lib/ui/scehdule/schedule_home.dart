@@ -8,6 +8,7 @@ import 'package:fun_fam/theme/FunFamColorScheme.dart';
 import 'package:fun_fam/ui/calendar/calendar_builder.dart';
 import 'package:fun_fam/ui/calendar/calendar_event.dart';
 import 'package:fun_fam/ui/calendar/calendar_header.dart';
+import 'package:fun_fam/ui/scehdule/schedule_list_item.dart';
 import 'package:go_router/go_router.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -143,88 +144,31 @@ class _ScheduleHomeState extends State<ScheduleHome> {
                 child: ValueListenableBuilder<List<ScheduleModel>>(
                   valueListenable: _selectedSchedules,
                   builder: (context, value, _) {
-                    // List<Widget> w = value.map((e) => Container()).toList();
-
-                    return Column(
-                        children: value
-                            .map((event) => Container(
-                                  child: Text(event.title),
-                                ))
-                            .toList());
-
-                    // value.map((event) =>
-                    //     Padding(
-                    //                       padding: EdgeInsets.only(bottom: 15),
-                    //                       child: Row(
-                    //                         mainAxisSize: MainAxisSize.max,
-                    //                         children: [
-                    //                           Container(
-                    //                             height: 7,
-                    //                             width: 7,
-                    //                             decoration: BoxDecoration(
-                    //                                 shape: BoxShape.circle,
-                    //                                 color: Theme.of(context)
-                    //                                     .colorScheme
-                    //                                     .blue), //Change color
-                    //                           ),
-                    //                           const SizedBox(
-                    //                             width: 5,
-                    //                           ),
-                    //                           Text(
-                    //                             format.format(model.startDate.toDate()),
-                    //                             style: Theme.of(context)
-                    //                                 .textTheme
-                    //                                 .headline3!
-                    //                                 .copyWith(color: Colors.black),
-                    //                           ),
-                    //                           const SizedBox(
-                    //                             width: 8,
-                    //                           ),
-                    //                           Flexible(
-                    //                             child: Text(
-                    //                               model.title,
-                    //                               overflow: TextOverflow.ellipsis,
-                    //                               style: Theme.of(context)
-                    //                                   .textTheme
-                    //                                   .headline3!
-                    //                                   .copyWith(color: Colors.black),
-                    //                             ),
-                    //                           ),
-                    //                           const SizedBox(
-                    //                             width: 5,
-                    //                           ),
-                    //                           Text(model.nickname,
-                    //                               style: Theme.of(context)
-                    //                                   .textTheme
-                    //                                   .caption!
-                    //                                   .copyWith(
-                    //                                       color: Theme.of(context)
-                    //                                           .colorScheme
-                    //                                           .darkGrey)),
-                    //                         ],
-                    //                       ));
-                    //                 }).toList()));
-                    // )
-
-                    return ListView.builder(
-                      itemCount: value.length,
-                      itemBuilder: (context, index) {
-                        return Container(
-                          margin: const EdgeInsets.symmetric(
-                            horizontal: 12.0,
-                            vertical: 4.0,
-                          ),
-                          decoration: BoxDecoration(
-                            border: Border.all(),
-                            borderRadius: BorderRadius.circular(12.0),
-                          ),
-                          child: ListTile(
-                            onTap: () => print('${value[index]}'),
-                            title: Text('${value[index]}'),
-                          ),
-                        );
-                      },
-                    );
+                    return value.isNotEmpty
+                        ? Column(
+                            children: value
+                                .map((event) =>
+                                    ScheduleListItem(schedule: event))
+                                .toList())
+                        : Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Image.asset("assets/ic_empty.png"),
+                              const SizedBox(
+                                height: 15,
+                              ),
+                              Text(
+                                "아직 가족들의 이번달 스케줄이 없어요",
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .headline3!
+                                    .copyWith(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .darkGrey),
+                              )
+                            ],
+                          );
                   },
                 ),
               ),
