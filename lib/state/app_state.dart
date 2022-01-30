@@ -11,13 +11,13 @@ class AppState extends ChangeNotifier {
 
   String? _email;
   String? _nickname;
-  String? _avatarUrl;
+  String? _avatarRef;
 
   AppState(this.prefs) {
     loggedIn = prefs.getBool(prefLoggedInKey) ?? false;
     email = prefs.getString(prefEmailKey);
     nickname = prefs.getString(prefNicknameKey);
-    avatarUrl = prefs.getString(prefAvatarUrlKey);
+    avatarRef = prefs.getString(prefAvatarRefKey);
   }
 
   bool get isLaunched => _isLaunched;
@@ -51,11 +51,11 @@ class AppState extends ChangeNotifier {
     }
   }
 
-  String? get avatarUrl => _avatarUrl;
-  set avatarUrl(String? value) {
+  String? get avatarRef => _avatarRef;
+  set avatarRef(String? value) {
     if (value != null) {
-      _avatarUrl = value;
-      prefs.setString(prefAvatarUrlKey, value);
+      _avatarRef = value;
+      prefs.setString(prefAvatarRefKey, value);
       notifyListeners();
     }
   }

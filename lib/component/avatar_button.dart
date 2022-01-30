@@ -1,9 +1,9 @@
 import 'dart:io';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:fun_fam/component/user_avartar.dart';
 import 'package:fun_fam/theme/FunFamColorScheme.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
@@ -13,13 +13,13 @@ import 'loading_overlay.dart';
 class AvatarButton extends StatefulWidget {
   final double size;
   final Function(File selectedImage) onImageSelected;
-  final String? avatarUrl;
+  final String? avatarRef;
 
   const AvatarButton(
       {Key? key,
       required this.size,
       required this.onImageSelected,
-      this.avatarUrl})
+      this.avatarRef})
       : super(key: key);
 
   @override
@@ -110,20 +110,8 @@ class _AvatarButtonState extends State<AvatarButton> {
   }
 
   Widget _getAvatarWidget() {
-    if (widget.avatarUrl != null) {
-      return CachedNetworkImage(
-          imageUrl: widget.avatarUrl!,
-          imageBuilder: (context, imageProvider) => Container(
-                width: widget.size,
-                height: widget.size,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  image:
-                      DecorationImage(image: imageProvider, fit: BoxFit.cover),
-                ),
-              ),
-          errorWidget: (context, url, error) =>
-              Image.asset("assets/ic_anonymous.png"));
+    if (widget.avatarRef != null) {
+      return UserAvatar(avatarRef: widget.avatarRef!, size: widget.size);
     } else {
       return (_croppedImage != null)
           ? CircleAvatar(

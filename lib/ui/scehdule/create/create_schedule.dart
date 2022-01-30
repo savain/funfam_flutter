@@ -55,8 +55,8 @@ class _CreateScheduleState extends State<CreateSchedule> {
   @override
   Widget build(BuildContext context) {
     final overlay = LoadingOverlay.of(context);
-    // Future.delayed(const Duration(milliseconds: 500),
-    //     () => (_isDatePickerOpen) ? null : showDatePicker());
+    Future.delayed(const Duration(milliseconds: 500),
+        () => (_isDatePickerOpen) ? null : showDatePicker());
 
     return Scaffold(
       appBar: AppBar(
@@ -192,6 +192,9 @@ class _CreateScheduleState extends State<CreateSchedule> {
     String uid = FirebaseAuth.instance.currentUser!.uid;
     String nickname =
         Provider.of<AppState>(context, listen: false).nickname ?? "";
+
+    // FirebaseFirestore.instance
+    //     .collection("schedules")
 
     await scheduleRef
         .add(ScheduleModel(

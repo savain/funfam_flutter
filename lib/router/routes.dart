@@ -5,6 +5,7 @@ import 'package:fun_fam/ui/entry.dart';
 import 'package:fun_fam/ui/home.dart';
 import 'package:fun_fam/ui/nickname.dart';
 import 'package:fun_fam/ui/scehdule/create/create_schedule.dart';
+import 'package:fun_fam/ui/scehdule/detail/schedule_detail.dart';
 import 'package:go_router/go_router.dart';
 
 class FunFamRouter {
@@ -53,6 +54,16 @@ class FunFamRouter {
                   child: const CreateSchedule(),
                 ),
               ),
+              GoRoute(
+                  name: routeScheduleDetail,
+                  path: 'schedule/detail/:date',
+                  pageBuilder: (context, state) {
+                    final date = state.params['date']!;
+                    return MaterialPage<void>(
+                      key: state.pageKey,
+                      child: ScheduleDetail(date: date),
+                    );
+                  }),
             ]),
       ],
       redirect: (state) {

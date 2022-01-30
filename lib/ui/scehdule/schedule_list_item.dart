@@ -2,7 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fun_fam/model/ScheduleModel.dart';
 import 'package:fun_fam/theme/FunFamColorScheme.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+
+import '../../constants.dart';
 
 class ScheduleListItem extends StatelessWidget {
   final ScheduleModel schedule;
@@ -13,50 +16,53 @@ class ScheduleListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     DateFormat format = DateFormat("MM월 dd일");
 
-    return Padding(
-        padding: EdgeInsets.only(bottom: 15),
-        child: Row(
-          mainAxisSize: MainAxisSize.max,
-          children: [
-            Container(
-              height: 7,
-              width: 7,
-              decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Theme.of(context).colorScheme.blue), //Change color
-            ),
-            const SizedBox(
-              width: 5,
-            ),
-            Text(
-              format.format(schedule.startDate.toDate()),
-              style: Theme.of(context)
-                  .textTheme
-                  .headline3!
-                  .copyWith(color: Colors.black),
-            ),
-            const SizedBox(
-              width: 8,
-            ),
-            Flexible(
-              child: Text(
-                schedule.title,
-                overflow: TextOverflow.ellipsis,
-                style: Theme.of(context)
-                    .textTheme
-                    .headline3!
-                    .copyWith(color: Colors.black),
-              ),
-            ),
-            const SizedBox(
-              width: 5,
-            ),
-            Text(schedule.nickname,
-                style: Theme.of(context)
-                    .textTheme
-                    .caption!
-                    .copyWith(color: Theme.of(context).colorScheme.darkGrey)),
-          ],
-        ));
+    return InkWell(
+        onTap: () {
+          String date = scheduleDateFormat.format(schedule.startDate.toDate());
+          context.pushNamed(routeScheduleDetail, params: {'date': date});
+        },
+        child: Padding(
+            padding: const EdgeInsets.only(bottom: 15),
+            child: Row(
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                Container(
+                  height: 7,
+                  width: 7,
+                  decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Theme.of(context).colorScheme.blue), //Change color
+                ),
+                const SizedBox(
+                  width: 5,
+                ),
+                Text(
+                  format.format(schedule.startDate.toDate()),
+                  style: Theme.of(context)
+                      .textTheme
+                      .headline3!
+                      .copyWith(color: Colors.black),
+                ),
+                const SizedBox(
+                  width: 8,
+                ),
+                Flexible(
+                  child: Text(
+                    schedule.title,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context)
+                        .textTheme
+                        .headline3!
+                        .copyWith(color: Colors.black),
+                  ),
+                ),
+                const SizedBox(
+                  width: 5,
+                ),
+                Text(schedule.nickname,
+                    style: Theme.of(context).textTheme.caption!.copyWith(
+                        color: Theme.of(context).colorScheme.darkGrey)),
+              ],
+            )));
   }
 }

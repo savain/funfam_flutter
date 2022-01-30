@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:collection';
+import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -53,6 +54,7 @@ class _ScheduleHomeState extends State<ScheduleHome> {
         .snapshots()
         .listen((querySnapshot) {
       querySnapshot.docChanges.forEach((snapshot) {
+        log(snapshot.toString());
         ScheduleModel model = (snapshot.doc.data() as ScheduleModel);
         _schedules.update(
             model.startDate.toDate(), (value) => value..add(model),
@@ -128,6 +130,14 @@ class _ScheduleHomeState extends State<ScheduleHome> {
                           calendarFormat: _calendarFormat,
                           availableGestures: AvailableGestures.horizontalSwipe,
                           rangeSelectionMode: _rangeSelectionMode,
+                          onDaySelected: (selectedDay, focusedDay) {
+                            if (_getEventsForDay(selectedDay).isNotEmpty) {
+                              String date =
+                                  scheduleDateFormat.format(selectedDay);
+                              context.pushNamed(routeScheduleDetail,
+                                  params: {'date': date});
+                            }
+                          },
                           onCalendarCreated: (controller) =>
                               _pageController = controller,
                           onPageChanged: (focusedDay) {
