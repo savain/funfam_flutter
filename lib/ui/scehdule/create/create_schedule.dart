@@ -193,9 +193,6 @@ class _CreateScheduleState extends State<CreateSchedule> {
     String nickname =
         Provider.of<AppState>(context, listen: false).nickname ?? "";
 
-    // FirebaseFirestore.instance
-    //     .collection("schedules")
-
     await scheduleRef
         .add(ScheduleModel(
             uid: uid,

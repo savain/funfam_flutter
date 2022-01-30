@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -111,7 +112,8 @@ class _AvatarButtonState extends State<AvatarButton> {
 
   Widget _getAvatarWidget() {
     if (widget.avatarRef != null) {
-      return UserAvatar(avatarRef: widget.avatarRef!, size: widget.size);
+      return UserAvatar(
+          uid: FirebaseAuth.instance.currentUser!.uid, size: widget.size);
     } else {
       return (_croppedImage != null)
           ? CircleAvatar(

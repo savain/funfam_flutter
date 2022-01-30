@@ -51,6 +51,9 @@ class _ScheduleHomeState extends State<ScheduleHome> {
     _scheduleSub = scheduleRef
         .where("startDate", isGreaterThan: Timestamp.fromDate(kFirstDay))
         .where("startDate", isLessThan: Timestamp.fromDate(kLastDay))
+        .orderBy(
+          "startDate",
+        )
         .snapshots()
         .listen((querySnapshot) {
       querySnapshot.docChanges.forEach((snapshot) {
