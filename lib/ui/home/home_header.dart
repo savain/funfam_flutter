@@ -1,7 +1,6 @@
-import 'dart:io';
-
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:fun_fam/component/avatar_button.dart';
+import 'package:fun_fam/component/user_avartar.dart';
 import 'package:fun_fam/state/app_state.dart';
 import 'package:fun_fam/theme/FunFamColorScheme.dart';
 import 'package:intl/intl.dart';
@@ -40,11 +39,9 @@ class HomeHeader extends StatelessWidget {
             ],
           ),
           Container(
-            child: AvatarButton(
+            child: UserAvatar(
               size: 85,
-              onImageSelected: (File selectedImage) {},
-              avatarRef:
-                  Provider.of<AppState>(context, listen: false).avatarRef,
+              uid: FirebaseAuth.instance.currentUser!.uid,
             ),
             width: 85,
             height: 85,

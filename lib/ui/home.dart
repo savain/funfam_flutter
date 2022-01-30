@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:fun_fam/ui/home/home_navigation.dart';
 import 'package:fun_fam/ui/home/profile_screen.dart';
 import 'package:fun_fam/ui/home/shopping_screen.dart';
 import 'package:fun_fam/ui/scehdule/schedule_home.dart';
@@ -43,13 +42,15 @@ class _HomeState extends State<Home> {
         Theme.of(context).textTheme.headline3!.copyWith(color: Colors.black);
 
     return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        actions: [Image.asset("assets/ic_noti.png")],
-      ),
-      body: IndexedStack(
-        index: _selectedIndex,
-        children: _widgetOptions,
+      // appBar: AppBar(
+      //   elevation: 0,
+      //   actions: [Image.asset("assets/ic_noti.png")],
+      // ),
+      body: SafeArea(
+        child: IndexedStack(
+          index: _selectedIndex,
+          children: _widgetOptions,
+        ),
       ),
       //
       // Column(
@@ -59,10 +60,10 @@ class _HomeState extends State<Home> {
       //     Expanded(child: _widgetOptions.elementAt(_selectedIndex))
       //   ],
       // ),
-      bottomNavigationBar: HomeNavigation(
-        selectedIndex: _selectedIndex,
-        onItemTapped: _onItemTapped,
-      ),
+      // bottomNavigationBar: HomeNavigation(
+      //   selectedIndex: _selectedIndex,
+      //   onItemTapped: _onItemTapped,
+      // ),
     );
   }
 }
