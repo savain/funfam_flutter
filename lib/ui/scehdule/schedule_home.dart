@@ -171,7 +171,7 @@ class _ScheduleHomeState extends State<ScheduleHome> {
                                 height: 15,
                               ),
                               Text(
-                                "아직 가족들의 이번달 스케줄이 없어요",
+                                "아직 가족들의 이번달 스케줄이 없어요...",
                                 style: Theme.of(context)
                                     .textTheme
                                     .headline3!
