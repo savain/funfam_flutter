@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -24,10 +23,10 @@ class AvatarButton extends StatefulWidget {
       : super(key: key);
 
   @override
-  _AvatarButtonState createState() => _AvatarButtonState();
+  AvatarButtonState createState() => AvatarButtonState();
 }
 
-class _AvatarButtonState extends State<AvatarButton> {
+class AvatarButtonState extends State<AvatarButton> {
   final ImagePicker _picker = ImagePicker();
   XFile? _pickedImage;
   File? _croppedImage;
@@ -116,8 +115,7 @@ class _AvatarButtonState extends State<AvatarButton> {
 
   Widget _getAvatarWidget() {
     if (widget.avatarRef != null) {
-      return UserAvatar(
-          uid: FirebaseAuth.instance.currentUser!.uid, size: widget.size);
+      return UserAvatar(avatarRef: widget.avatarRef, size: widget.size);
     } else {
       return (_croppedImage != null)
           ? CircleAvatar(

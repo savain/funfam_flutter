@@ -5,35 +5,28 @@ import 'package:flutter/material.dart';
 import 'package:fun_fam/theme/FunFamColorScheme.dart';
 
 class UserAvatar extends StatefulWidget {
-  final String uid;
+  final String? avatarRef;
+  final String? uid;
   final double size;
 
-  const UserAvatar({Key? key, required this.uid, required this.size})
+  const UserAvatar({Key? key, required this.size, this.uid, this.avatarRef})
       : super(key: key);
 
   @override
-  _UserAvatarState createState() => _UserAvatarState();
+  UserAvatarState createState() => UserAvatarState();
 }
 
-class _UserAvatarState extends State<UserAvatar> {
-  late Future<String> _getAvatarUrl;
-
-  @override
-  void initState() {
-    _getAvatarUrl = getAvatarUrl();
-    super.initState();
-  }
-
+class UserAvatarState extends State<UserAvatar> {
   @override
   Widget build(BuildContext context) {
-    // final DrawableRoot svgRoot = SvgPicture.asset("assets/ic_empty.svg");
-
-    return FutureBuilder<String>(
-        future: _getAvatarUrl,
+    return FutureBuilder<void>(
+        future: _getAvatarUrl(),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           return CircleAvatar(
             radius: widget.size / 2,
-            backgroundImage: (snapshot.hasData == false || snapshot.hasError)
+            backgroundImage: (snapshot.hasData == false ||
+                    snapshot.hasError ||
+                    snapshot.data == null)
                 ? const AssetImage("assets/ic_empty.png")
                 : CachedNetworkImageProvider(snapshot.data!) as ImageProvider,
             backgroundColor: Theme.of(context).colorScheme.lightGrey1,
@@ -41,17 +34,26 @@ class _UserAvatarState extends State<UserAvatar> {
         });
   }
 
-  Future<String> getAvatarUrl() async {
-    DocumentSnapshot snapshot = await FirebaseFirestore.instance
-        .collection('users')
-        .doc(widget.uid)
-        .get();
+  Future<String?> _getAvatarUrl() async {
+    String? avatarRef;
+    if (widget.avatarRef != null) {
+      avatarRef = widget.avatarRef!;
+    } else if (widget.uid != null) {
+      DocumentSnapshot snapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(widget.uid)
+          .get();
 
-    Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
-    String avatarRef = data["avatarRef"];
+      Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
+      avatarRef = data["avatarRef"];
+    }
 
-    String downloadUrl =
-        await FirebaseStorage.instance.ref(avatarRef).getDownloadURL();
-    return downloadUrl;
+    if (avatarRef != null) {
+      String downloadUrl =
+          await FirebaseStorage.instance.ref(avatarRef).getDownloadURL();
+      return downloadUrl;
+    } else {
+      return null;
+    }
   }
 }

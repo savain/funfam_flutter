@@ -51,6 +51,7 @@ dependencies:
   table_calendar: ^3.0.3
   intl: ^0.17.0
   modal_bottom_sheet: ^2.0.0
+  uuid: 3.0.5
 
 dev_dependencies:
   flutter_test:
