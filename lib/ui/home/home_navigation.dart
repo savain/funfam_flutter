@@ -19,17 +19,6 @@ class HomeNavigation extends StatelessWidget {
       items: <BottomNavigationBarItem>[
         BottomNavigationBarItem(
             icon: SvgPicture.asset(
-              "assets/nav_profile.svg",
-              height: 20,
-            ),
-            activeIcon: SvgPicture.asset(
-              "assets/nav_profile.svg",
-              color: Colors.black,
-              height: 20,
-            ),
-            label: ""),
-        BottomNavigationBarItem(
-            icon: SvgPicture.asset(
               "assets/nav_calendar.svg",
               height: 20,
             ),
@@ -46,6 +35,17 @@ class HomeNavigation extends StatelessWidget {
             ),
             activeIcon: SvgPicture.asset(
               "assets/nav_shopping.svg",
+              color: Colors.black,
+              height: 20,
+            ),
+            label: ""),
+        BottomNavigationBarItem(
+            icon: SvgPicture.asset(
+              "assets/nav_profile.svg",
+              height: 20,
+            ),
+            activeIcon: SvgPicture.asset(
+              "assets/nav_profile.svg",
               color: Colors.black,
               height: 20,
             ),

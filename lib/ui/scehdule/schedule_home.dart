@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:collection';
-import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -33,12 +32,12 @@ class _ScheduleHomeState extends State<ScheduleHome> {
   late DateTime kLastDay;
 
   late StreamSubscription<QuerySnapshot> _scheduleSub;
-  final LinkedHashMap<DateTime, List<ScheduleModel>> _schedules =
-      LinkedHashMap<DateTime, List<ScheduleModel>>(
+  final LinkedHashMap<DateTime, List<DocumentSnapshot>> _schedules =
+      LinkedHashMap<DateTime, List<DocumentSnapshot>>(
     equals: isSameDay,
     hashCode: getHashCode,
   );
-  final ValueNotifier<List<ScheduleModel>> _selectedSchedules =
+  final ValueNotifier<List<DocumentSnapshot>> _selectedSchedules =
       ValueNotifier([]);
 
   @override
@@ -57,11 +56,26 @@ class _ScheduleHomeState extends State<ScheduleHome> {
         .snapshots()
         .listen((querySnapshot) {
       querySnapshot.docChanges.forEach((snapshot) {
-        log(snapshot.toString());
         ScheduleModel model = (snapshot.doc.data() as ScheduleModel);
-        _schedules.update(
-            model.startDate.toDate(), (value) => value..add(model),
-            ifAbsent: () => [model]);
+        if (snapshot.type == DocumentChangeType.modified ||
+            snapshot.type == DocumentChangeType.removed) {
+          if (_schedules[model.startDate.toDate()] != null) {
+            int index = _schedules[model.startDate.toDate()]
+                    ?.indexWhere((element) => element.id == snapshot.doc.id) ??
+                -1;
+            if (index >= 0) {
+              if (snapshot.type == DocumentChangeType.modified) {
+                _schedules[model.startDate.toDate()]![index] = snapshot.doc;
+              } else {
+                _schedules[model.startDate.toDate()]!.removeAt(index);
+              }
+            }
+          }
+        } else {
+          _schedules.update(
+              model.startDate.toDate(), (value) => value..add(snapshot.doc),
+              ifAbsent: () => [snapshot.doc]);
+        }
 
         updateEvents();
       });
@@ -76,7 +90,9 @@ class _ScheduleHomeState extends State<ScheduleHome> {
   }
 
   List<ScheduleModel> _getEventsForDay(DateTime day) {
-    return (day.month == _focusedDay.value.month) ? _schedules[day] ?? [] : [];
+    return (day.month == _focusedDay.value.month)
+        ? _schedules[day]?.map((e) => e.data() as ScheduleModel).toList() ?? []
+        : [];
   }
 
   @override
@@ -154,14 +170,14 @@ class _ScheduleHomeState extends State<ScheduleHome> {
               Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 40, vertical: 30),
-                child: ValueListenableBuilder<List<ScheduleModel>>(
+                child: ValueListenableBuilder<List<DocumentSnapshot>>(
                   valueListenable: _selectedSchedules,
                   builder: (context, value, _) {
                     return value.isNotEmpty
                         ? Column(
                             children: value
-                                .map((event) =>
-                                    ScheduleListItem(schedule: event))
+                                .map((event) => ScheduleListItem(
+                                    schedule: event.data() as ScheduleModel))
                                 .toList())
                         : Column(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -222,6 +238,10 @@ class _ScheduleHomeState extends State<ScheduleHome> {
           .map((scheduleDate) => _schedules[scheduleDate]?.toList() ?? [])
           .expand((schedule) => schedule)
           .toList();
+
+      _selectedSchedules.value.sort((a, b) => (a.data() as ScheduleModel)
+          .startDate
+          .compareTo((b.data() as ScheduleModel).startDate));
     });
   }
 }

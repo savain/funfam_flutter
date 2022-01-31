@@ -41,23 +41,27 @@ class _AvatarButtonState extends State<AvatarButton> {
   Widget build(BuildContext context) {
     final overlay = LoadingOverlay.of(context);
 
-    return IconButton(
-      padding: EdgeInsets.zero,
-      icon: (!kIsWeb && defaultTargetPlatform == TargetPlatform.android)
-          ? FutureBuilder<void>(
-              future: _retrieveLostData(),
-              builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
-                return _getAvatarWidget();
-              })
-          : _getAvatarWidget(),
-      splashColor: Colors.transparent,
-      highlightColor: Colors.transparent,
-      onPressed: () async {
-        await overlay.during(_pickAvatarImage());
-        if (_pickedImage != null) {
-          overlay.during(_cropAvatarImage());
-        }
-      },
+    return SizedBox(
+      width: widget.size,
+      height: widget.size,
+      child: IconButton(
+        padding: EdgeInsets.zero,
+        icon: (!kIsWeb && defaultTargetPlatform == TargetPlatform.android)
+            ? FutureBuilder<void>(
+                future: _retrieveLostData(),
+                builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+                  return _getAvatarWidget();
+                })
+            : _getAvatarWidget(),
+        splashColor: Colors.transparent,
+        highlightColor: Colors.transparent,
+        onPressed: () async {
+          await overlay.during(_pickAvatarImage());
+          if (_pickedImage != null) {
+            overlay.during(_cropAvatarImage());
+          }
+        },
+      ),
     );
   }
 

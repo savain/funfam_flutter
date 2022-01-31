@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:fun_fam/ui/home/profile_screen.dart';
 import 'package:fun_fam/ui/home/shopping_screen.dart';
+import 'package:fun_fam/ui/my_page/my_page.dart';
 import 'package:fun_fam/ui/scehdule/schedule_home.dart';
 
 import 'home/home_header.dart';
+import 'home/home_navigation.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -13,7 +14,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  int _selectedIndex = 1;
+  int _selectedIndex = 0;
 
   void _onItemTapped(int index) {
     setState(() {
@@ -24,16 +25,17 @@ class _HomeState extends State<Home> {
   final List<Widget> _widgetOptions = [
     Column(
       mainAxisAlignment: MainAxisAlignment.center,
-      children: const [Expanded(child: ProfileScreen())],
-    ),
-    Column(
-      mainAxisAlignment: MainAxisAlignment.center,
       children: const [HomeHeader(), Expanded(child: ScheduleHome())],
     ),
     Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: const [HomeHeader(), Expanded(child: ShoppingScreen())],
-    )
+    ),
+    Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: const [Expanded(child: MyPage())],
+    ),
   ];
 
   @override
@@ -42,28 +44,20 @@ class _HomeState extends State<Home> {
         Theme.of(context).textTheme.headline3!.copyWith(color: Colors.black);
 
     return Scaffold(
-      // appBar: AppBar(
-      //   elevation: 0,
-      //   actions: [Image.asset("assets/ic_noti.png")],
-      // ),
+      appBar: AppBar(
+        elevation: 0,
+        // actions: [Image.asset("assets/ic_noti.png")],
+      ),
       body: SafeArea(
         child: IndexedStack(
           index: _selectedIndex,
           children: _widgetOptions,
         ),
       ),
-      //
-      // Column(
-      //   mainAxisAlignment: MainAxisAlignment.center,
-      //   children: [
-      //     if (_selectedIndex > 0) HomeHeader(),
-      //     Expanded(child: _widgetOptions.elementAt(_selectedIndex))
-      //   ],
-      // ),
-      // bottomNavigationBar: HomeNavigation(
-      //   selectedIndex: _selectedIndex,
-      //   onItemTapped: _onItemTapped,
-      // ),
+      bottomNavigationBar: HomeNavigation(
+        selectedIndex: _selectedIndex,
+        onItemTapped: _onItemTapped,
+      ),
     );
   }
 }

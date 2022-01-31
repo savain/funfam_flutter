@@ -16,9 +16,9 @@ class ScheduleListItem extends StatelessWidget {
 
     return Container(
       color: Theme.of(context).colorScheme.lightGrey1,
-      margin: EdgeInsets.only(top: 10),
+      margin: const EdgeInsets.only(top: 10),
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 25),
+        padding: const EdgeInsets.only(top: 25, bottom: 45),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [

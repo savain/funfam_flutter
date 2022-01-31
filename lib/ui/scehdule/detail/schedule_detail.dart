@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -54,15 +53,12 @@ class _ScheduleDetailState extends State<ScheduleDetail> {
           if (snapshot.type == DocumentChangeType.modified) {
             int index = _comments.value
                 .indexWhere((element) => element.id == snapshot.doc.id);
-            log("modified $index");
             _comments.value[index] = snapshot.doc;
           } else if (snapshot.type == DocumentChangeType.removed) {
             int index = _comments.value
                 .indexWhere((element) => element.id == snapshot.doc.id);
-            log("removed $index");
             _comments.value.removeAt(index);
           } else {
-            log("added");
             _comments.value.add(snapshot.doc);
           }
         });
@@ -298,7 +294,7 @@ class _ScheduleDetailState extends State<ScheduleDetail> {
   }
 
   void _scrollDown() async {
-    await Future.delayed(const Duration(milliseconds: 250));
+    await Future.delayed(const Duration(milliseconds: 500));
 
     _scrollController.animateTo(
       _scrollController.position.maxScrollExtent,
@@ -336,6 +332,7 @@ class _ScheduleDetailState extends State<ScheduleDetail> {
   void _onSuccessAddReply() {
     _reply = null;
     _textController.clear();
+    _scrollDown();
   }
 
   void _onFailAddReply() {

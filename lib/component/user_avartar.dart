@@ -1,7 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fun_fam/theme/FunFamColorScheme.dart';
 
@@ -27,33 +26,18 @@ class _UserAvatarState extends State<UserAvatar> {
 
   @override
   Widget build(BuildContext context) {
+    // final DrawableRoot svgRoot = SvgPicture.asset("assets/ic_empty.svg");
+
     return FutureBuilder<String>(
         future: _getAvatarUrl,
         builder: (BuildContext context, AsyncSnapshot snapshot) {
-          if (snapshot.hasData == false || snapshot.hasError) {
-            return Container(
-              width: widget.size,
-              height: widget.size,
-              decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.lightGrey1,
-                  borderRadius:
-                      BorderRadius.all(Radius.circular(widget.size / 2))),
-            );
-          } else {
-            return CachedNetworkImage(
-                imageUrl: snapshot.data!,
-                imageBuilder: (context, imageProvider) => Container(
-                      width: widget.size,
-                      height: widget.size,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        image: DecorationImage(
-                            image: imageProvider, fit: BoxFit.cover),
-                      ),
-                    ),
-                errorWidget: (context, url, error) =>
-                    Image.asset("assets/ic_anonymous.png"));
-          }
+          return CircleAvatar(
+            radius: widget.size / 2,
+            backgroundImage: (snapshot.hasData == false || snapshot.hasError)
+                ? const AssetImage("assets/ic_empty.png")
+                : CachedNetworkImageProvider(snapshot.data!) as ImageProvider,
+            backgroundColor: Theme.of(context).colorScheme.lightGrey1,
+          );
         });
   }
 
