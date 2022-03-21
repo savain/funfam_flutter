@@ -12,6 +12,7 @@ class AppState extends ChangeNotifier {
   String? _email;
   String? _nickname;
   String? _avatarRef;
+  final Map<String, String> _userAvatarRefs = {};
 
   AppState(this.prefs) {
     loggedIn = prefs.getBool(prefLoggedInKey) ?? false;
@@ -57,6 +58,13 @@ class AppState extends ChangeNotifier {
       _avatarRef = value;
       prefs.setString(prefAvatarRefKey, value);
       notifyListeners();
+    }
+  }
+
+  String? getUserAvatarRef(String uid) => _userAvatarRefs[uid];
+  setUserAvatarRef(String? uid, String url) {
+    if (uid != null) {
+      _userAvatarRefs[uid] = url;
     }
   }
 

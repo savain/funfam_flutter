@@ -3,6 +3,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:fun_fam/theme/FunFamColorScheme.dart';
+import 'package:provider/provider.dart';
+
+import '../state/app_state.dart';
 
 class UserAvatar extends StatefulWidget {
   final String? avatarRef;
@@ -39,6 +42,13 @@ class UserAvatarState extends State<UserAvatar> {
     if (widget.avatarRef != null) {
       avatarRef = widget.avatarRef!;
     } else if (widget.uid != null) {
+      // check stored download url
+      String? downloadUrl = Provider.of<AppState>(context, listen: false)
+          .getUserAvatarRef(widget.uid!);
+      if (downloadUrl != null) {
+        return downloadUrl;
+      }
+
       DocumentSnapshot snapshot = await FirebaseFirestore.instance
           .collection('users')
           .doc(widget.uid)
@@ -51,6 +61,9 @@ class UserAvatarState extends State<UserAvatar> {
     if (avatarRef != null) {
       String downloadUrl =
           await FirebaseStorage.instance.ref(avatarRef).getDownloadURL();
+
+      Provider.of<AppState>(context, listen: false)
+          .setUserAvatarRef(widget.uid, downloadUrl);
       return downloadUrl;
     } else {
       return null;
