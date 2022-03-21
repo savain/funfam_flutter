@@ -1,3 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -19,6 +22,8 @@ class AppState extends ChangeNotifier {
     email = prefs.getString(prefEmailKey);
     nickname = prefs.getString(prefNicknameKey);
     avatarRef = prefs.getString(prefAvatarRefKey);
+
+    saveDeviceToken();
   }
 
   bool get isLaunched => _isLaunched;
@@ -70,5 +75,22 @@ class AppState extends ChangeNotifier {
 
   void checkLoggedIn() {
     loggedIn = prefs.getBool(prefLoggedInKey) ?? false;
+  }
+
+  void saveDeviceToken() async {
+    String? token = await FirebaseMessaging.instance.getToken();
+    await saveTokenToDatabase(token);
+    FirebaseMessaging.instance.onTokenRefresh.listen(saveTokenToDatabase);
+  }
+
+  Future<void> saveTokenToDatabase(String? token) async {
+    if (loggedIn && token != null) {
+      String userId = FirebaseAuth.instance.currentUser!.uid;
+
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .update({'fcmToken': token});
+    }
   }
 }
