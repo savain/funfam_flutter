@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:collection';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:fun_fam/model/ScheduleModel.dart';
 import 'package:fun_fam/theme/FunFamColorScheme.dart';
@@ -9,6 +10,7 @@ import 'package:fun_fam/ui/calendar/calendar_builder.dart';
 import 'package:fun_fam/ui/calendar/calendar_event.dart';
 import 'package:fun_fam/ui/calendar/calendar_header.dart';
 import 'package:fun_fam/ui/scehdule/schedule_list_item.dart';
+import 'package:fun_fam/util/base_dio.dart';
 import 'package:go_router/go_router.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -149,10 +151,17 @@ class _ScheduleHomeState extends State<ScheduleHome> {
                           calendarFormat: _calendarFormat,
                           availableGestures: AvailableGestures.horizontalSwipe,
                           rangeSelectionMode: _rangeSelectionMode,
-                          onDaySelected: (selectedDay, focusedDay) {
+                          onDaySelected: (selectedDay, focusedDay) async {
                             if (_getEventsForDay(selectedDay).isNotEmpty) {
                               String date =
                                   scheduleDateFormat.format(selectedDay);
+
+                              Response res = await BaseDio()
+                                  .client
+                                  ?.post('/notification', data: {
+                                'userName': '이서방',
+                                'messageType': 'schedule_comment'
+                              });
                               context.pushNamed(routeScheduleDetail,
                                   params: {'date': date});
                             }

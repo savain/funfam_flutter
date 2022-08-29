@@ -1,4 +1,7 @@
+import 'dart:developer';
+
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:fun_fam/router/routes.dart';
 import 'package:fun_fam/state/app_state.dart';
@@ -6,6 +9,14 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'firebase/firebase_options.dart';
+
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  // If you're going to use other Firebase services in the background, such as Firestore,
+  // make sure you call `initializeApp` before using other Firebase services.
+  await Firebase.initializeApp();
+
+  log("Handling a background message: ${message.messageId}");
+}
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -15,6 +26,13 @@ void main() async {
 
   final state = AppState(await SharedPreferences.getInstance());
   state.checkLoggedIn();
+
+  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    log("Got message in foreground!");
+    log('Message data: ${message.data}');
+  });
+
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
   runApp(FunFamApp(appState: state));
 }
