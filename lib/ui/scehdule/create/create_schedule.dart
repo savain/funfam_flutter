@@ -1,19 +1,17 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'dart:developer';
+
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:fun_fam/component/loading_overlay.dart';
-import 'package:fun_fam/model/ScheduleModel.dart';
-import 'package:fun_fam/state/app_state.dart';
 import 'package:fun_fam/theme/FunFamColorScheme.dart';
 import 'package:fun_fam/ui/scehdule/create/create_schedule_content_input.dart';
 import 'package:fun_fam/ui/scehdule/create/create_schedule_title_input.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
-import 'package:provider/provider.dart';
 
 import 'date_picker/date_picker.dart';
 import 'date_picker/date_picker_activator.dart';
@@ -189,21 +187,26 @@ class _CreateScheduleState extends State<CreateSchedule> {
   }
 
   Future<void> submitSchedule() async {
-    String uid = FirebaseAuth.instance.currentUser!.uid;
-    String nickname =
-        Provider.of<AppState>(context, listen: false).nickname ?? "";
+    Response response;
+    var dio = Dio();
+    response = await dio.get('http://15.164.151.240/test');
+    log(response.data.toString());
 
-    await scheduleRef
-        .add(ScheduleModel(
-            uid: uid,
-            nickname: nickname,
-            startDate: Timestamp.fromDate(_startDate!),
-            endDate: Timestamp.fromDate(_endDate!),
-            title: _title!,
-            schedule: _content!,
-            createdDate: Timestamp.now()))
-        .then((value) => _onSuccessAddSchedule())
-        .catchError((error) => _onFailAddSchedule());
+    // String uid = FirebaseAuth.instance.currentUser!.uid;
+    // String nickname =
+    //     Provider.of<AppState>(context, listen: false).nickname ?? "";
+    //
+    // await scheduleRef
+    //     .add(ScheduleModel(
+    //         uid: uid,
+    //         nickname: nickname,
+    //         startDate: Timestamp.fromDate(_startDate!),
+    //         endDate: Timestamp.fromDate(_endDate!),
+    //         title: _title!,
+    //         schedule: _content!,
+    //         createdDate: Timestamp.now()))
+    //     .then((value) => _onSuccessAddSchedule())
+    //     .catchError((error) => _onFailAddSchedule());
   }
 
   void _onSuccessAddSchedule() {

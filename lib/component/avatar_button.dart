@@ -88,7 +88,7 @@ class AvatarButtonState extends State<AvatarButton> {
   }
 
   Future<void> _cropAvatarImage() async {
-    File? croppedFile = await ImageCropper.cropImage(
+    File? croppedFile = await ImageCropper().cropImage(
         sourcePath: _pickedImage!.path,
         aspectRatioPresets: [CropAspectRatioPreset.square],
         androidUiSettings: AndroidUiSettings(

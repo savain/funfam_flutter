@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class FunFamUser {
   FunFamUser({
     required this.uid,
@@ -27,4 +29,8 @@ class FunFamUser {
       'avatarRef': avatarRef,
     };
   }
+}
+
+DocumentReference userRef(String uid) {
+  return FirebaseFirestore.instance.collection("users").doc(uid);
 }
