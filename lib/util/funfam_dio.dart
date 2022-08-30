@@ -8,7 +8,7 @@ class FunfamDio {
 
   FunfamDio._privateConstructor() {
     var options = BaseOptions(
-      baseUrl: 'http://localhost:3000/',
+      baseUrl: 'http://15.164.151.240',
       connectTimeout: 5000,
       receiveTimeout: 3000,
     );

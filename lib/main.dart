@@ -3,12 +3,79 @@ import 'dart:developer';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:fun_fam/router/routes.dart';
 import 'package:fun_fam/state/app_state.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'firebase/firebase_options.dart';
+
+Future<void> initNotification() async {
+  await FirebaseMessaging.instance.requestPermission(
+    alert: true,
+    announcement: true,
+    badge: true,
+    carPlay: true,
+    criticalAlert: true,
+    provisional: true,
+    sound: true,
+  );
+
+  // iOS foreground에서 heads up display 표시를 위해 alert, sound true로 설정
+  await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
+    alert: true, // Required to display a heads up notification
+    badge: true,
+    sound: true,
+  );
+
+  // Android용 새 Notification Channel
+  const AndroidNotificationChannel androidNotificationChannel =
+      AndroidNotificationChannel(
+    'funfam_noti_channel', // 임의의 id
+    'FunFam 알림', // 설정에 보일 채널명
+    importance: Importance.max,
+  );
+
+  // Notification Channel을 디바이스에 생성
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
+  await flutterLocalNotificationsPlugin
+      .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin>()
+      ?.createNotificationChannel(androidNotificationChannel);
+
+  // FlutterLocalNotificationsPlugin 초기화. 이 부분은 notification icon 부분에서 다시 다룬다.
+  await flutterLocalNotificationsPlugin.initialize(
+      const InitializationSettings(
+          android: AndroidInitializationSettings('@mipmap/ic_launcher'),
+          iOS: IOSInitializationSettings()),
+      onSelectNotification: (String? payload) async {});
+
+  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    log("Got message in foreground!");
+    log('Message data: ${message.data}');
+
+    RemoteNotification? notification = message.notification;
+    AndroidNotification? android = message.notification?.android;
+
+    if (notification != null && android != null) {
+      flutterLocalNotificationsPlugin.show(
+        0,
+        notification.title,
+        notification.body,
+        const NotificationDetails(
+          android: AndroidNotificationDetails(
+            'funfam_noti_channel', // AndroidNotificationChannel()에서 생성한 ID
+            'FunFam 알림', // 설정에 보일 채널명
+          ),
+        ),
+        // 여기서는 간단하게 data 영역의 임의의 필드(ex. argument)를 사용한다.
+        payload: message.data['argument'],
+      );
+    }
+  });
+}
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   // If you're going to use other Firebase services in the background, such as Firestore,
@@ -27,12 +94,8 @@ void main() async {
   final state = AppState(await SharedPreferences.getInstance());
   state.checkLoggedIn();
 
-  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-    log("Got message in foreground!");
-    log('Message data: ${message.data}');
-  });
-
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  await initNotification();
 
   runApp(FunFamApp(appState: state));
 }

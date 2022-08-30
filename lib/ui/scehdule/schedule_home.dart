@@ -10,11 +10,11 @@ import 'package:fun_fam/ui/calendar/calendar_builder.dart';
 import 'package:fun_fam/ui/calendar/calendar_event.dart';
 import 'package:fun_fam/ui/calendar/calendar_header.dart';
 import 'package:fun_fam/ui/scehdule/schedule_list_item.dart';
-import 'package:fun_fam/util/base_dio.dart';
 import 'package:go_router/go_router.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 import '../../../constants.dart';
+import '../../util/funfam_dio.dart';
 
 class ScheduleHome extends StatefulWidget {
   const ScheduleHome({Key? key}) : super(key: key);
@@ -156,7 +156,7 @@ class _ScheduleHomeState extends State<ScheduleHome> {
                               String date =
                                   scheduleDateFormat.format(selectedDay);
 
-                              Response res = await BaseDio()
+                              Response res = await FunfamDio()
                                   .client
                                   ?.post('/notification', data: {
                                 'userName': '이서방',
