@@ -5,18 +5,12 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:fun_fam/router/routes.dart';
 import 'package:fun_fam/state/app_state.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'constants.dart';
 import 'firebase/firebase_options.dart';
-
-Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  // If you're going to use other Firebase services in the background, such as Firestore,
-  // make sure you call `initializeApp` before using other Firebase services.
-  await Firebase.initializeApp();
-
-  log("Handling a background message: ${message.messageId}");
-}
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -31,16 +25,27 @@ void main() async {
     log("Got message in foreground!");
     log('Message data: ${message.data}');
   });
-
-  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-
   runApp(FunFamApp(appState: state));
 }
 
-class FunFamApp extends StatelessWidget {
+class FunFamApp extends StatefulWidget {
   final AppState appState;
-
   const FunFamApp({Key? key, required this.appState}) : super(key: key);
+
+  @override
+  _FunFamApp createState() => _FunFamApp();
+}
+
+class _FunFamApp extends State<FunFamApp> {
+  late GoRouter router;
+
+  @override
+  void initState() {
+    FirebaseMessaging.onMessageOpenedApp.listen((remoteMessage) {
+      _firebaseMessagingBackgroundHandler(remoteMessage);
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,17 +53,17 @@ class FunFamApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider<AppState>(
           lazy: false,
-          create: (BuildContext createContext) => appState,
+          create: (BuildContext createContext) => widget.appState,
         ),
         Provider<FunFamRouter>(
           lazy: false,
-          create: (BuildContext createContext) => FunFamRouter(appState),
+          create: (BuildContext createContext) => FunFamRouter(widget.appState),
         ),
       ],
       child: Builder(
         builder: (BuildContext context) {
-          final router =
-              Provider.of<FunFamRouter>(context, listen: false).router;
+          router = Provider.of<FunFamRouter>(context, listen: false).router;
+
           return MaterialApp.router(
               routeInformationParser: router.routeInformationParser,
               routerDelegate: router.routerDelegate,
@@ -89,5 +94,29 @@ class FunFamApp extends StatelessWidget {
         },
       ),
     );
+  }
+
+  Future<void> _firebaseMessagingBackgroundHandler(
+      RemoteMessage message) async {
+    // If you're going to use other Firebase services in the background, such as Firestore,
+    // make sure you call `initializeApp` before using other Firebase services.
+    await Firebase.initializeApp();
+    await Future.delayed(Duration.zero);
+
+    String messageType = message.data["messageType"];
+    log("add_schedule_comment $messageType");
+    switch (messageType) {
+      case 'add_schedule_comment':
+        String date = message.data["date"];
+        log("add_schedule_comment $date");
+        router.pushNamed(routeScheduleDetail, params: {'date': date});
+        break;
+      case 'add_schedule_comment2':
+        break;
+      default:
+        log("not defined message type");
+    }
+
+    log("on message open! a background message: ${message.data} ${message.toString()}");
   }
 }

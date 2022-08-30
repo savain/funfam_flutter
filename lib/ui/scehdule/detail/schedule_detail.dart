@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -18,6 +20,8 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+
+import '../../../util/base_dio.dart';
 
 class ScheduleDetail extends StatefulWidget {
   final String date;
@@ -315,7 +319,7 @@ class _ScheduleDetailState extends State<ScheduleDetail> {
               nickname: nickname,
               comment: _reply!,
               createdDate: Timestamp.now()))
-          .then((value) => _onSuccessAddReply())
+          .then((value) => _onSuccessAddReply(uid, nickname))
           .catchError((error) => _onFailAddReply());
     } else {
       Fluttertoast.showToast(
@@ -329,9 +333,15 @@ class _ScheduleDetailState extends State<ScheduleDetail> {
     }
   }
 
-  void _onSuccessAddReply() {
+  void _onSuccessAddReply(String uid, String nickname) async {
     _reply = null;
     _textController.clear();
+
+    Response res = await BaseDio().client?.post(
+        '/notification/schedule/comment',
+        data: {'uid': uid, 'nickname': nickname, 'date': widget.date});
+    log("on Success add reply $res");
+
     _scrollDown();
   }
 

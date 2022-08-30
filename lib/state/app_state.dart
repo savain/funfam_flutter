@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -86,6 +88,8 @@ class AppState extends ChangeNotifier {
   Future<void> saveTokenToDatabase(String? token) async {
     if (loggedIn && token != null) {
       String userId = FirebaseAuth.instance.currentUser!.uid;
+
+      log("save token data base when updated $token");
 
       await FirebaseFirestore.instance
           .collection('users')
