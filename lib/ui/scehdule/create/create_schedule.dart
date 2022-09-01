@@ -15,6 +15,8 @@ import 'package:intl/intl.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 
+import '../../../constants.dart';
+import '../../../util/base_dio.dart';
 import 'date_picker/date_picker.dart';
 import 'date_picker/date_picker_activator.dart';
 
@@ -202,11 +204,11 @@ class _CreateScheduleState extends State<CreateSchedule> {
             title: _title!,
             schedule: _content!,
             createdDate: Timestamp.now()))
-        .then((value) => _onSuccessAddSchedule())
+        .then((value) => _onSuccessAddSchedule(uid, nickname))
         .catchError((error) => _onFailAddSchedule());
   }
 
-  void _onSuccessAddSchedule() {
+  void _onSuccessAddSchedule(String uid, String nickname) async {
     Fluttertoast.showToast(
         msg: "새로운 스케줄을 등록했습니다.",
         toastLength: Toast.LENGTH_SHORT,
@@ -215,6 +217,10 @@ class _CreateScheduleState extends State<CreateSchedule> {
         backgroundColor: Theme.of(context).colorScheme.lightGrey2,
         textColor: Colors.black,
         fontSize: 16.0);
+
+    String date = scheduleDateFormat.format(_startDate!);
+    await BaseDio().client?.post('/notification/schedule/add',
+        data: {'uid': uid, 'nickname': nickname, 'date': date});
 
     context.pop();
   }

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -157,16 +158,19 @@ class _FunFamApp extends State<FunFamApp> {
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       RemoteNotification? notification = message.notification;
 
-      const AndroidNotificationDetails androidPlatformChannelSpecifics =
-          AndroidNotificationDetails(androidChannelId, androidChannelName,
-              channelDescription: androidChannelDescription,
-              importance: Importance.max,
-              priority: Priority.high);
+      String uid = FirebaseAuth.instance.currentUser!.uid;
+      final String senderUid = message.data["uid"];
 
-      const NotificationDetails platformChannelSpecifics =
-          NotificationDetails(android: androidPlatformChannelSpecifics);
+      if (notification != null && senderUid != uid) {
+        const AndroidNotificationDetails androidPlatformChannelSpecifics =
+            AndroidNotificationDetails(androidChannelId, androidChannelName,
+                channelDescription: androidChannelDescription,
+                importance: Importance.max,
+                priority: Priority.high);
 
-      if (notification != null) {
+        const NotificationDetails platformChannelSpecifics =
+            NotificationDetails(android: androidPlatformChannelSpecifics);
+
         flutterLocalNotificationsPlugin.show(
           0,
           notification.title,
@@ -191,12 +195,11 @@ class _FunFamApp extends State<FunFamApp> {
   void handleNotificationMessage(Map<String, dynamic> payload) {
     String? messageType = payload["messageType"];
     if (messageType != null) {
-      log("handleNotificationMessage $messageType");
       switch (messageType) {
+        case 'new_schedule':
         case 'add_schedule_comment':
           String? date = payload["date"];
           if (date != null) {
-            log("handleNotificationMessage add_schedule_comment $date");
             router.pushNamed(routeScheduleDetail, params: {'date': date});
           }
           break;

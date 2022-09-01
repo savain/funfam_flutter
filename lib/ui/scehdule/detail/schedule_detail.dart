@@ -1,8 +1,6 @@
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -337,10 +335,8 @@ class _ScheduleDetailState extends State<ScheduleDetail> {
     _reply = null;
     _textController.clear();
 
-    Response res = await BaseDio().client?.post(
-        '/notification/schedule/comment',
+    await BaseDio().client?.post('/notification/schedule/comment',
         data: {'uid': uid, 'nickname': nickname, 'date': widget.date});
-    log("on Success add reply $res");
 
     _scrollDown();
   }
