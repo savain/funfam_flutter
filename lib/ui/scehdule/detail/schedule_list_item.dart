@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fun_fam/component/user_avartar.dart';
@@ -94,17 +93,17 @@ class ScheduleListItem extends StatelessWidget {
                 ],
               ),
             ),
-            if (schedule.uid == FirebaseAuth.instance.currentUser?.uid)
-              Positioned(
-                  top: 25,
-                  right: 25,
-                  child: IconButton(
-                    iconSize: 25,
-                    icon: Icon(Icons.close),
-                    onPressed: () {
-                      onDeleted();
-                    },
-                  ))
+            // if (schedule.uid == FirebaseAuth.instance.currentUser?.uid)
+            Positioned(
+                top: 25,
+                right: 25,
+                child: IconButton(
+                  iconSize: 25,
+                  icon: Icon(Icons.close),
+                  onPressed: () {
+                    onDeleted();
+                  },
+                ))
           ],
         ));
   }

@@ -57,8 +57,8 @@ class _ScheduleDetailState extends State<ScheduleDetail> {
                 _scheduleDate.month, _scheduleDate.day + 1, 0)))
         .snapshots()
         .listen((querySnapshot) {
-      querySnapshot.docChanges.forEach((snapshot) {
-        setState(() {
+      for (var snapshot in querySnapshot.docChanges) {
+        setState(() async {
           if (snapshot.type == DocumentChangeType.modified) {
             int index = _schedules.value
                 .indexWhere((element) => element.id == snapshot.doc.id);
@@ -69,20 +69,28 @@ class _ScheduleDetailState extends State<ScheduleDetail> {
             _schedules.value.removeAt(index);
 
             if (_schedules.value.isEmpty) {
+              // dispose comments first before remove all comments
+              _comments.dispose();
+
+              var comments = await scheduleCommentRef(_scheduleDate).get();
+              for (var doc in comments.docs) {
+                await doc.reference.delete();
+              }
+
               context.pop();
             }
           } else {
             _schedules.value.add(snapshot.doc);
           }
         });
-      });
+      }
     });
 
     _commentSub = scheduleCommentRef(_scheduleDate)
         .orderBy("createdDate")
         .snapshots()
         .listen((querySnapshot) {
-      querySnapshot.docChanges.forEach((snapshot) {
+      for (var snapshot in querySnapshot.docChanges) {
         setState(() {
           if (snapshot.type == DocumentChangeType.modified) {
             int index = _comments.value
@@ -96,7 +104,7 @@ class _ScheduleDetailState extends State<ScheduleDetail> {
             _comments.value.add(snapshot.doc);
           }
         });
-      });
+      }
     });
 
     super.initState();
