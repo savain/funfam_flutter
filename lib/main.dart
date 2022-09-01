@@ -1,8 +1,11 @@
+import 'dart:convert';
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:fun_fam/router/routes.dart';
 import 'package:fun_fam/state/app_state.dart';
 import 'package:go_router/go_router.dart';
@@ -21,10 +24,6 @@ void main() async {
   final state = AppState(await SharedPreferences.getInstance());
   state.checkLoggedIn();
 
-  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-    log("Got message in foreground!");
-    log('Message data: ${message.data}');
-  });
   runApp(FunFamApp(appState: state));
 }
 
@@ -39,12 +38,18 @@ class FunFamApp extends StatefulWidget {
 class _FunFamApp extends State<FunFamApp> {
   late GoRouter router;
 
+  // Notification Channel을 디바이스에 생성
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
+
   @override
   void initState() {
     FirebaseMessaging.onMessageOpenedApp.listen((remoteMessage) {
       _firebaseMessagingBackgroundHandler(remoteMessage);
     });
     super.initState();
+
+    initForegroundNotification();
   }
 
   @override
@@ -96,6 +101,83 @@ class _FunFamApp extends State<FunFamApp> {
     );
   }
 
+  Future<void> initForegroundNotification() async {
+    // Create android notification channel
+    const androidChannelId = 'funfam_notification_channel';
+    const androidChannelName = 'FunFam 알림';
+    const androidChannelDescription = 'funfam notification channel';
+
+    if (Platform.isAndroid) {
+      const AndroidNotificationChannel androidNotificationChannel =
+          AndroidNotificationChannel(androidChannelId, androidChannelName,
+              description: androidChannelDescription,
+              importance: Importance.max);
+
+      final AndroidFlutterLocalNotificationsPlugin? androidImplementation =
+          flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin>();
+
+      await androidImplementation
+          ?.createNotificationChannel(androidNotificationChannel);
+
+      await androidImplementation?.requestPermission();
+    }
+
+    if (Platform.isIOS) {
+      await FirebaseMessaging.instance.requestPermission(
+        alert: true,
+        announcement: true,
+        badge: true,
+        carPlay: true,
+        criticalAlert: true,
+        provisional: true,
+        sound: true,
+      );
+
+      // iOS foreground에서 heads up display 표시를 위해 alert, sound true로 설정
+      await FirebaseMessaging.instance
+          .setForegroundNotificationPresentationOptions(
+        alert: true, // Required to display a heads up notification
+        badge: true,
+        sound: true,
+      );
+    }
+
+    // FlutterLocalNotificationsPlugin 초기화.
+    await flutterLocalNotificationsPlugin.initialize(
+        const InitializationSettings(
+            android: AndroidInitializationSettings('@mipmap/ic_launcher'),
+            iOS: IOSInitializationSettings()),
+        onSelectNotification: (String? payload) async {
+      if (payload != null) {
+        handleNotificationMessage(jsonDecode(payload));
+      }
+    });
+
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      RemoteNotification? notification = message.notification;
+
+      const AndroidNotificationDetails androidPlatformChannelSpecifics =
+          AndroidNotificationDetails(androidChannelId, androidChannelName,
+              channelDescription: androidChannelDescription,
+              importance: Importance.max,
+              priority: Priority.high);
+
+      const NotificationDetails platformChannelSpecifics =
+          NotificationDetails(android: androidPlatformChannelSpecifics);
+
+      if (notification != null) {
+        flutterLocalNotificationsPlugin.show(
+          0,
+          notification.title,
+          notification.body,
+          platformChannelSpecifics,
+          payload: jsonEncode(message.data),
+        );
+      }
+    });
+  }
+
   Future<void> _firebaseMessagingBackgroundHandler(
       RemoteMessage message) async {
     // If you're going to use other Firebase services in the background, such as Firestore,
@@ -103,20 +185,26 @@ class _FunFamApp extends State<FunFamApp> {
     await Firebase.initializeApp();
     await Future.delayed(Duration.zero);
 
-    String messageType = message.data["messageType"];
-    log("add_schedule_comment $messageType");
-    switch (messageType) {
-      case 'add_schedule_comment':
-        String date = message.data["date"];
-        log("add_schedule_comment $date");
-        router.pushNamed(routeScheduleDetail, params: {'date': date});
-        break;
-      case 'add_schedule_comment2':
-        break;
-      default:
-        log("not defined message type");
-    }
+    handleNotificationMessage(message.data);
+  }
 
-    log("on message open! a background message: ${message.data} ${message.toString()}");
+  void handleNotificationMessage(Map<String, dynamic> payload) {
+    String? messageType = payload["messageType"];
+    if (messageType != null) {
+      log("handleNotificationMessage $messageType");
+      switch (messageType) {
+        case 'add_schedule_comment':
+          String? date = payload["date"];
+          if (date != null) {
+            log("handleNotificationMessage add_schedule_comment $date");
+            router.pushNamed(routeScheduleDetail, params: {'date': date});
+          }
+          break;
+        case 'add_schedule_comment2':
+          break;
+        default:
+          log("not defined message type");
+      }
+    }
   }
 }
