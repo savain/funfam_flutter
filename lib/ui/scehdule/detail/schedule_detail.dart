@@ -4,7 +4,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:fun_fam/constants.dart';
@@ -38,6 +37,9 @@ class _ScheduleDetailState extends State<ScheduleDetail> {
   String? _reply;
   bool _showReplay = false;
 
+  late StreamSubscription<QuerySnapshot> _scheduleSub;
+  final ValueNotifier<List<DocumentSnapshot>> _schedules = ValueNotifier([]);
+
   late StreamSubscription<QuerySnapshot> _commentSub;
   final ValueNotifier<List<DocumentSnapshot>> _comments = ValueNotifier([]);
 
@@ -45,6 +47,36 @@ class _ScheduleDetailState extends State<ScheduleDetail> {
   void initState() {
     initializeDateFormatting();
     _scheduleDate = scheduleDateFormat.parse(widget.date);
+
+    _scheduleSub = scheduleRef
+        .where("startDate",
+            isGreaterThan: Timestamp.fromDate(DateTime(
+                _scheduleDate.year, _scheduleDate.month, _scheduleDate.day, 0)))
+        .where("startDate",
+            isLessThan: Timestamp.fromDate(DateTime(_scheduleDate.year,
+                _scheduleDate.month, _scheduleDate.day + 1, 0)))
+        .snapshots()
+        .listen((querySnapshot) {
+      querySnapshot.docChanges.forEach((snapshot) {
+        setState(() {
+          if (snapshot.type == DocumentChangeType.modified) {
+            int index = _schedules.value
+                .indexWhere((element) => element.id == snapshot.doc.id);
+            _schedules.value[index] = snapshot.doc;
+          } else if (snapshot.type == DocumentChangeType.removed) {
+            int index = _schedules.value
+                .indexWhere((element) => element.id == snapshot.doc.id);
+            _schedules.value.removeAt(index);
+
+            if (_schedules.value.isEmpty) {
+              context.pop();
+            }
+          } else {
+            _schedules.value.add(snapshot.doc);
+          }
+        });
+      });
+    });
 
     _commentSub = scheduleCommentRef(_scheduleDate)
         .orderBy("createdDate")
@@ -110,29 +142,38 @@ class _ScheduleDetailState extends State<ScheduleDetail> {
           child: Column(
             children: [
               Expanded(
-                  child: FutureBuilder<QuerySnapshot>(
-                      future: schedules.get(),
-                      builder: (context, snapshot) {
-                        if (!snapshot.hasData) {
-                          return Center(
-                            child: SpinKitChasingDots(
-                                color: Theme.of(context).colorScheme.green,
-                                size: 50.0),
-                          );
-                        }
-
-                        return SingleChildScrollView(
+                  child:
+                      // FutureBuilder<QuerySnapshot>(
+                      //     future: schedules.get(),
+                      //     builder: (context, snapshot) {
+                      //       if (!snapshot.hasData) {
+                      //         return Center(
+                      //           child: SpinKitChasingDots(
+                      //               color: Theme.of(context).colorScheme.green,
+                      //               size: 50.0),
+                      //         );
+                      //       }
+                      //
+                      //       return
+                      SingleChildScrollView(
                           physics: const ClampingScrollPhysics(),
                           controller: _scrollController,
                           child: Column(
                               children: [
-                            snapshot.data!.docs
-                                .map((docSnapshot) =>
-                                    (docSnapshot.data() as ScheduleModel))
-                                .map((schedule) =>
-                                    ScheduleListItem(schedule: schedule))
-                                .toList(),
                             [
+                              ValueListenableBuilder<List<DocumentSnapshot>>(
+                                  valueListenable: _schedules,
+                                  builder: (context, value, _) {
+                                    return Column(
+                                        children: value.map((docSnapshot) {
+                                      return ScheduleListItem(
+                                          schedule: docSnapshot.data()
+                                              as ScheduleModel,
+                                          onDeleted: () {
+                                            _removeSchedule(docSnapshot.id);
+                                          });
+                                    }).toList());
+                                  }),
                               Padding(
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 20, vertical: 10),
@@ -159,23 +200,23 @@ class _ScheduleDetailState extends State<ScheduleDetail> {
                                         height: 20,
                                       ),
                                     ),
-                                    const SizedBox(
-                                      width: 10,
-                                    ),
-                                    TextButton.icon(
-                                      onPressed: () {},
-                                      icon: Text(
-                                        "공유하기",
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .caption!
-                                            .copyWith(color: Colors.black),
-                                      ),
-                                      label: SvgPicture.asset(
-                                        "assets/ic_share.svg",
-                                        height: 20,
-                                      ),
-                                    )
+                                    // const SizedBox(
+                                    //   width: 10,
+                                    // ),
+                                    // TextButton.icon(
+                                    //   onPressed: () {},
+                                    //   icon: Text(
+                                    //     "공유하기",
+                                    //     style: Theme.of(context)
+                                    //         .textTheme
+                                    //         .caption!
+                                    //         .copyWith(color: Colors.black),
+                                    //   ),
+                                    //   label: SvgPicture.asset(
+                                    //     "assets/ic_share.svg",
+                                    //     height: 20,
+                                    //   ),
+                                    // )
                                   ],
                                 ),
                               ),
@@ -225,11 +266,10 @@ class _ScheduleDetailState extends State<ScheduleDetail> {
                                                 ],
                                               );
                                       }))
-                            ],
-                            // 댓글 list
-                          ].expand((widget) => widget).toList()),
-                        );
-                      })),
+                              //   ],
+                              //   // 댓글 list
+                            ]
+                          ].expand((widget) => widget).toList()))),
               if (_showReplay)
                 SizedBox(
                   height: 50,
@@ -344,6 +384,24 @@ class _ScheduleDetailState extends State<ScheduleDetail> {
   void _onFailAddReply() {
     Fluttertoast.showToast(
         msg: "새로운 댓글 등록에 실패했습니다.\n영수에게 문의해주세요. ㅜ",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Theme.of(context).colorScheme.lightGrey2,
+        textColor: Colors.black,
+        fontSize: 16.0);
+  }
+
+  Future<void> _removeSchedule(String documentId) async {
+    await scheduleRef
+        .doc(documentId)
+        .delete()
+        .then((value) => _onSuccessRemoveSchedule());
+  }
+
+  void _onSuccessRemoveSchedule() {
+    Fluttertoast.showToast(
+        msg: "일정을 삭제했습니다.",
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.BOTTOM,
         timeInSecForIosWeb: 1,
