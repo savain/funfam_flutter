@@ -38,6 +38,11 @@ class AppState extends ChangeNotifier {
   set loggedIn(bool value) {
     _loggedIn = value;
     prefs.setBool(prefLoggedInKey, value);
+
+    if (value) {
+      saveDeviceToken();
+    }
+
     notifyListeners();
   }
 

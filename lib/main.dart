@@ -25,6 +25,10 @@ void main() async {
   final state = AppState(await SharedPreferences.getInstance());
   state.checkLoggedIn();
 
+  String? token = await FirebaseMessaging.instance.getToken();
+  state.saveTokenToDatabase(token);
+  FirebaseMessaging.instance.onTokenRefresh.listen(state.saveTokenToDatabase);
+
   runApp(FunFamApp(appState: state));
 }
 
@@ -156,6 +160,8 @@ class _FunFamApp extends State<FunFamApp> {
     });
 
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      log("on new message in foreground ${message.data}");
+
       RemoteNotification? notification = message.notification;
 
       String uid = FirebaseAuth.instance.currentUser!.uid;
@@ -189,6 +195,7 @@ class _FunFamApp extends State<FunFamApp> {
     await Firebase.initializeApp();
     await Future.delayed(Duration.zero);
 
+    log("on new message in background ${message.data}");
     handleNotificationMessage(message.data);
   }
 
